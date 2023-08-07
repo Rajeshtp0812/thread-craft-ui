@@ -3,18 +3,17 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './layout/app.layout.module';
-import { NotfoundComponent } from './demo/components/notfound/notfound.component';
-import { ProductService } from './demo/service/product.service';
-import { CountryService } from './demo/service/country.service';
-import { CustomerService } from './demo/service/customer.service';
-import { EventService } from './demo/service/event.service';
-import { IconService } from './demo/service/icon.service';
-import { NodeService } from './demo/service/node.service';
-import { PhotoService } from './demo/service/photo.service';
+import * as productService from './common/service/product.service';
+import { CountryService } from './common/service/country.service';
+import { CustomerService } from './common/service/customer.service';
+import { EventService } from './common/service/event.service';
+import { IconService } from './common/service/icon.service';
+import { NodeService } from './common/service/node.service';
+import { PhotoService } from './common/service/photo.service';
 
 @NgModule({
     declarations: [
-        AppComponent, NotfoundComponent
+        AppComponent,
     ],
     imports: [
         AppRoutingModule,
@@ -23,7 +22,7 @@ import { PhotoService } from './demo/service/photo.service';
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService
+        PhotoService, productService.ProductService
     ],
     bootstrap: [AppComponent]
 })

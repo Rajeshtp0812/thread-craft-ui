@@ -46,14 +46,6 @@ export class AppConfigComponent {
         this.layoutService.config.inputStyle = _val;
     }
 
-    get ripple(): boolean {
-        return this.layoutService.config.ripple;
-    }
-
-    set ripple(_val: boolean) {
-        this.layoutService.config.ripple = _val;
-    }
-
     onConfigButtonClick() {
         this.layoutService.showConfigSidebar();
     }
