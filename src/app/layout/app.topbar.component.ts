@@ -1,6 +1,7 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from "./service/app.layout.service";
+import { ContextMenu } from 'primeng/contextmenu';
 
 @Component({
     selector: 'app-topbar',
@@ -16,5 +17,16 @@ export class AppTopBarComponent {
 
     @ViewChild('topbarmenu') menu!: ElementRef;
 
+    @ViewChild('cm') contextMenu: ContextMenu;
+
+    contextMenuItems = [{ label: 'Profile' }, { label: 'Logout' }];
+
     constructor(public layoutService: LayoutService) { }
+
+    showContextMenu(event: MouseEvent) {
+        event.preventDefault();
+        this.contextMenu.show(event);
+    }
+
+
 }

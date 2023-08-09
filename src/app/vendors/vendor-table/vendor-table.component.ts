@@ -1,14 +1,14 @@
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Table } from 'primeng/table';
-import { MODAL_TYPE } from '../../../common/constants';
+import { MODAL_TYPE } from '../../common/constants';
 import { ContextMenu } from 'primeng/contextmenu';
 
 @Component({
-  selector: 'app-clients-table',
-  templateUrl: './clients-table.component.html',
-  styleUrls: ['./clients-table.component.scss']
+  selector: 'app-vendor-table',
+  templateUrl: './vendor-table.component.html',
+  styleUrls: ['./vendor-table.component.scss']
 })
-export class ClientsTableComponent {
+export class VendorTableComponent {
   isDataLoading = false;
   cols = [
     { field: 'name', header: 'Company Name' },
@@ -29,9 +29,7 @@ export class ClientsTableComponent {
   contextMenus: any[];
   @Output() openCompaniesForm = new EventEmitter();
   filterFields = [];
-
   @ViewChild('cm') contextMenu: ContextMenu
-
 
   constructor() { }
 
@@ -59,7 +57,7 @@ export class ClientsTableComponent {
         {
           label: 'Delete',
           data: data,
-          command: (data) => this.deleteClient(data)
+          command: (data) => this.deleteVendor(data)
 
         },
       ];
@@ -67,7 +65,7 @@ export class ClientsTableComponent {
     this.contextMenu.show(event);
   }
 
-  deleteClient(data) {
+  deleteVendor(data) {
     console.log('delete')
   }
 

@@ -1,41 +1,44 @@
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Table } from 'primeng/table';
-import { MODAL_TYPE } from '../../../common/constants';
+import { MENUS, MODAL_TYPE } from '../../../common/constants';
 import { ContextMenu } from 'primeng/contextmenu';
 
 @Component({
-  selector: 'app-clients-table',
-  templateUrl: './clients-table.component.html',
-  styleUrls: ['./clients-table.component.scss']
+  selector: 'app-companies-table',
+  templateUrl: './companies-table.component.html',
+  styleUrls: ['./companies-table.component.scss']
 })
-export class ClientsTableComponent {
+export class CompaniesTableComponent {
   isDataLoading = false;
   cols = [
-    { field: 'name', header: 'Company Name' },
+    { field: 'companyName', header: 'Company' },
     { field: 'email', header: 'Email' },
+    { field: 'contact', header: 'Contact' },
     { field: 'state', header: 'State' },
     { field: 'city', header: 'City' },
-    { field: 'pinCode', header: 'Pin Code' },
-    { field: 'address', header: 'Address' }];
+    { field: 'address', header: 'Address' },
+    { field: 'gst', header: 'GST' },
+  ];
   data = [{
-    "name": "1000",
-    "email": "f230fh0g3",
-    "state": "Product Description",
-    "city": "bamboo-watch.jpg",
-    "pinCode": 65,
-    "address": "Accessories",
-    "companyId": 24
+    companyName: 'Saba Fashion',
+    email: 'sabafashion@gmail.com',
+    contact: 9874563210,
+    state: 'Maharashtra',
+    city: 'Mumbai',
+    address: 'Gala No 12, Kidwai Nagar Wadala (East)',
+    gst: ''
   }];
   contextMenus: any[];
+  frozen = true;
   @Output() openCompaniesForm = new EventEmitter();
   filterFields = [];
 
   @ViewChild('cm') contextMenu: ContextMenu
 
-
   constructor() { }
 
   ngOnInit(): void {
+    this.filterFields = this.cols.map(col => col.field);
   }
 
   onContextMenu(event: MouseEvent, type: String, data = null) {
@@ -59,7 +62,7 @@ export class ClientsTableComponent {
         {
           label: 'Delete',
           data: data,
-          command: (data) => this.deleteClient(data)
+          command: (data) => this.deleteCompany(data)
 
         },
       ];
@@ -67,13 +70,11 @@ export class ClientsTableComponent {
     this.contextMenu.show(event);
   }
 
-  deleteClient(data) {
+  deleteCompany(data) {
     console.log('delete')
   }
-
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
-
 }

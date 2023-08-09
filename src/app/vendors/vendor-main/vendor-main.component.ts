@@ -1,18 +1,18 @@
 import { Component } from '@angular/core';
-import { MODAL_TYPE } from '../../../common/constants';
+import { MODAL_TYPE } from '../../common/constants';
 
 @Component({
-  selector: 'app-clients-main',
-  templateUrl: './clients-main.component.html',
-  styleUrls: ['./clients-main.component.scss']
+  selector: 'app-vendor-main',
+  templateUrl: './vendor-main.component.html',
+  styleUrls: ['./vendor-main.component.scss']
 })
-export class ClientsMainComponent {
-  isClientFormOpen = false;
+export class VendorMainComponent {
+  isVendorFormOpen = false;
   editProductDetails: any = null;
   selectedModal: MODAL_TYPE;
 
   openCompaniesForm(event) {
-    this.isClientFormOpen = !this.isClientFormOpen;
+    this.isVendorFormOpen = !this.isVendorFormOpen;
     this.editProductDetails = null;
     this.selectedModal = event.modalType;
     if (event?.modalType === MODAL_TYPE.EDIT) {
@@ -21,6 +21,6 @@ export class ClientsMainComponent {
   }
 
   cancel() {
-    this.isClientFormOpen = false;
+    this.isVendorFormOpen = false;
   }
 }

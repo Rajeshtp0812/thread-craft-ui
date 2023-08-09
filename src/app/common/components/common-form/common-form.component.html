@@ -1,0 +1,37 @@
+<div class="col-12">
+    <div class="p-fluid p-formgrid grid">
+        <div class="col-12">
+            <label htmlFor="companyName">Company Name</label>
+            <input pInputText id="companyName" type="text" />
+        </div>
+        <div class="col-12 md:col-6">
+            <label htmlFor="email">Email</label>
+            <input pInputText id="email" type="text" />
+        </div>
+        <div class="col-12 md:col-6">
+            <label htmlFor="contact">Contact</label>
+            <input pInputText id="contact" type="text" />
+        </div>
+        <div class="col-12">
+            <label htmlFor="gst">GST</label>
+            <input pInputText id="gst" type="text" />
+        </div>
+        <div class="col-12">
+            <label htmlFor="address">Address</label>
+            <input pInputTextarea id="address" rows="4" />
+        </div>
+        <div class="col-12 md:col-6">
+            <label htmlFor="city">State</label>
+            <p-dropdown [options]="statesOptions" (onChange)="selectState($event)" [filter]="true"></p-dropdown>
+        </div>
+        <div class="col-12 md:col-6">
+            <label htmlFor="state">City</label>
+            <p-dropdown [options]="citiesOptions" [(ngModel)]="selectedCity" [filter]="true"
+                [disabled]="!citiesOptions?.length"></p-dropdown>
+        </div>
+        <div class="col-12 md:col-6">
+            <label htmlFor="zip">Zip</label>
+            <input pInputText id="zip" type="text" />
+        </div>
+    </div>
+</div>

@@ -12,3 +12,10 @@ $gutter: 1rem; //for primeflex grid system
 @import "assets/common/styles/flags/flags.css";
 @import "assets/common/styles/badges.scss";
 @import "assets/common/styles/code.scss";
+
+td {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }

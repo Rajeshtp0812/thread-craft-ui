@@ -2,8 +2,8 @@
     [value]="data"
     [columns]="cols"
     responsiveLayout="scroll"
+    [rows]="10"
     [globalFilterFields]="filterFields"
-    [showCurrentPageReport]="true"
     [rowHover]="true" dataKey="id"
     [resizableColumns]="true"
     [contextMenu]="cm"
@@ -34,7 +34,7 @@
             </div>
         </div>
     </ng-template>
-    <ng-template pTemplate="header" >
+    <ng-template pTemplate="header">
         <tr>
             <th
                 pResizableColumn
@@ -46,20 +46,19 @@
             <th style="max-width:5px" alignFrozen="right" pFrozenColumn></th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-client>
+    <ng-template pTemplate="body" let-company>
         <tr
-            [pContextMenuRow]="client"
-           >
+            [pContextMenuRow]="company">
             <td
                 pResizableColumn
                 *ngFor="let col of cols"
-                pTooltip="{{client[col.field]}}"
+                pTooltip="{{company[col.field]}}"
                 class="p-text-nowrap p-text-truncate"
                 tooltipPosition="bottom">
-                {{client[col.field]}}
+                {{company[col.field]}}
             </td>
-            <td style="width:5px" alignFrozen="right" pFrozenColumn>
-                <div><i class="pi pi-ellipsis-h action-menu" (click)="onContextMenu($event, 'rowMenu', client)"></i></div>
+            <td style="width:5px;" alignFrozen="right" pFrozenColumn >
+                <div><i class="pi pi-ellipsis-h action-menu" (click)="onContextMenu($event, 'rowMenu', company)"></i></div>
             </td>
         </tr>
     </ng-template>

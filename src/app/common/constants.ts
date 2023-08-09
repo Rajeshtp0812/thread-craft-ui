@@ -3,3 +3,8 @@ export enum MENUS {
     EDIT = 'edit',
     DELETE = 'delete'
 }
+
+export enum MODAL_TYPE {
+    ADD = 'add',
+    EDIT = 'edit'
+}

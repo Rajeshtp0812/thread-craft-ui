@@ -1,11 +1,10 @@
 <div class="col-12 card">
-    <h5>Clients</h5>
-    <app-clients-table (openCompaniesForm)="openCompaniesForm($event)"></app-clients-table>
+    <h5>Companies</h5>
+    <app-companies-table (openCompaniesForm)="openCompaniesForm($event)"></app-companies-table>
 </div>
 
-
-<p-dialog [(visible)]="isClientFormOpen" [style]="{width: '650px'}"
-    header="{{selectedModal === 'edit' ? 'Edit Client Details' : 'Create New Client'}}" [modal]="true" class="p-fluid"
+<p-dialog [(visible)]="isCompanyFormOpen" [style]="{width: '650px'}"
+    header="{{selectedModal === 'edit' ? 'Edit Company Details' : 'Create New Company'}}" [modal]="true" class="p-fluid"
     [resizable]="true" [closable]="false" [maximizable]="true">
 
     <app-common-form></app-common-form>
