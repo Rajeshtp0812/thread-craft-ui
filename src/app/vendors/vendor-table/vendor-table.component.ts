@@ -2,6 +2,8 @@ import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Table } from 'primeng/table';
 import { MODAL_TYPE } from '../../common/constants';
 import { ContextMenu } from 'primeng/contextmenu';
+import { VendorService } from '../vendor.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-vendor-table',
@@ -11,29 +13,39 @@ import { ContextMenu } from 'primeng/contextmenu';
 export class VendorTableComponent {
   isDataLoading = false;
   cols = [
-    { field: 'name', header: 'Company Name' },
+    { field: 'ownerName', header: 'Owner' },
+    { field: 'companyName', header: 'Company' },
     { field: 'email', header: 'Email' },
+    { field: 'contact', header: 'Contact' },
     { field: 'state', header: 'State' },
     { field: 'city', header: 'City' },
+    { field: 'address', header: 'Address' },
     { field: 'pinCode', header: 'Pin Code' },
-    { field: 'address', header: 'Address' }];
-  data = [{
-    "name": "1000",
-    "email": "f230fh0g3",
-    "state": "Product Description",
-    "city": "bamboo-watch.jpg",
-    "pinCode": 65,
-    "address": "Accessories",
-    "companyId": 24
-  }];
+    { field: 'gst', header: 'GST' }];
+  data = [];
   contextMenus: any[];
   @Output() openCompaniesForm = new EventEmitter();
   filterFields = [];
   @ViewChild('cm') contextMenu: ContextMenu
 
-  constructor() { }
+  constructor(private readonly vendorService: VendorService,
+    private readonly messageService: MessageService) { }
 
   ngOnInit(): void {
+    this.fetchData();
+    this.vendorService.refetchData.subscribe(value => this.fetchData());
+  }
+
+  async fetchData() {
+    this.isDataLoading = true;
+    try {
+      let response: any = await this.vendorService.getVendors();
+      this.data = response.data;
+    } catch (error) {
+      this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
+    } finally {
+      this.isDataLoading = false;
+    }
   }
 
   onContextMenu(event: MouseEvent, type: String, data = null) {
@@ -65,8 +77,13 @@ export class VendorTableComponent {
     this.contextMenu.show(event);
   }
 
-  deleteVendor(data) {
-    console.log('delete')
+  async deleteVendor(data) {
+    try {
+      await this.vendorService.deleteVendor(data.item.data.vendorId);
+      this.vendorService.refetchData.next(true);
+    } catch (error) {
+      this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
+    }
   }
 
 

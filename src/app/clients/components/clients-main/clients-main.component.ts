@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { MODAL_TYPE } from '../../../common/constants';
+import { ClientService } from '../../client.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-clients-main',
@@ -8,24 +10,51 @@ import { MODAL_TYPE } from '../../../common/constants';
 })
 export class ClientsMainComponent {
   isClientFormOpen = false;
-  editProductDetails: any = null;
+  editClientDetail: any = null;
   selectedModal: MODAL_TYPE;
   isFormValid = false;
+  formData = null;
+  selectedCompany;
+
+  constructor(private readonly clientService: ClientService,
+    private messageService: MessageService) {
+  }
 
   openCompaniesForm(event) {
     this.isClientFormOpen = !this.isClientFormOpen;
-    this.editProductDetails = null;
+    this.editClientDetail = null;
     this.selectedModal = event.modalType;
+    console.log(event)
     if (event?.modalType === MODAL_TYPE.EDIT) {
-      this.editProductDetails = event.data;
+      this.editClientDetail = event.data.item.data;
     }
   }
 
-  cancel() {
+  closeForm() {
     this.isClientFormOpen = false;
   }
 
-  formData(data: any) {
-    this.isFormValid = data.status;
+  async setFormData(formData: any) {
+    this.isFormValid = formData.status;
+    this.formData = formData.data;
+  }
+
+  async saveClient() {
+    if (!this.isFormValid) {
+      return;
+    }
+    try {
+      if (this.selectedModal === MODAL_TYPE.ADD) {
+        await this.clientService.createClient(this.formData);
+        this.messageService.add({ severity: 'success', summary: 'Company created successfully', detail: '' });
+      } else if (this.selectedModal === MODAL_TYPE.EDIT) {
+        await this.clientService.updateClient(this.editClientDetail.clientId, this.formData);
+        this.messageService.add({ severity: 'success', summary: 'Company updated succesfully', detail: '' });
+      }
+      this.closeForm();
+      this.clientService.refetchData.next(true);
+    } catch (error) {
+      this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
+    }
   }
 }

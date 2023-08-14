@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { Subject, lastValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-const URL = environment.companyURL;
+
+const URL = environment.vendorURL;
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -12,26 +13,25 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class CompaniesService {
+export class VendorService {
 
   refetchData = new Subject();
-  changedCompanyLabel = new Subject();
 
   constructor(private http: HttpClient) { }
 
-  getCompanies(): Promise<any> {
+  getVendors(): Promise<any> {
     return lastValueFrom(this.http.get(URL, {}));
   }
 
-  createCompany(data: any): Promise<any> {
+  createVendor(data: any): Promise<any> {
     return lastValueFrom(this.http.post(URL, data, httpOptions));
   }
 
-  updateCompany(id: number, data: any): Promise<any> {
+  updateVendor(id: number, data: any): Promise<any> {
     return lastValueFrom(this.http.put(`${URL}${id}`, data, httpOptions));
   }
 
-  deleteCompany(id: number) {
+  deleteVendor(id: number) {
     return lastValueFrom(this.http.delete(`${URL}${id}`));
   }
 }

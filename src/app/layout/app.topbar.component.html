@@ -8,7 +8,7 @@
     </button>
 
     <a routerLink="/main"
-        ><span class="layout-topbar-logo">{{ companyName }}</span></a
+        ><span class="layout-topbar-logo upper-case">{{ companyName }}</span></a
     >
 
     <button
@@ -44,12 +44,16 @@
 
 <p-dialog
     [(visible)]="isSwitchCompanyFormOpen"
-    [style]="{ width: '600px', 'min-height': '220px' }"
+    [style]="{ width: '600px', 'min-height': '320px' }"
     [modal]="true"
     class="p-fluid"
     [closable]="false"
 >
-    <p-dropdown [options]="[]"></p-dropdown>
+    <p-dropdown
+        [options]="companyOptions"
+        (onChange)="selectCompany($event)"
+        optionLabel="label"
+    ></p-dropdown>
 
     <ng-template pTemplate="footer">
         <button
@@ -66,6 +70,8 @@
             type="button"
             label="Submit"
             class="p-button-raised"
+            [disabled]="!isValid"
+            (click)="switchCompany()"
         ></button>
     </ng-template>
 </p-dialog>

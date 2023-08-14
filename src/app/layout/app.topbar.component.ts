@@ -1,5 +1,5 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { MenuItem } from 'primeng/api';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MenuItem, MessageService } from 'primeng/api';
 import { LayoutService } from "./service/app.layout.service";
 import { ContextMenu } from 'primeng/contextmenu';
 import { TokenStorageService } from '../auth/services/token-storage.service';
@@ -11,7 +11,7 @@ import { CompaniesService } from '../companies/companies.service';
     selector: 'app-topbar',
     templateUrl: './app.topbar.component.html'
 })
-export class AppTopBarComponent {
+export class AppTopBarComponent implements OnInit {
 
     items!: MenuItem[];
 
@@ -24,20 +24,60 @@ export class AppTopBarComponent {
     @ViewChild('cm') contextMenu: ContextMenu;
 
     companyName = '';
+    companyOptions = [];
+    isValid = false;
+    selectedCompany = null;
+
 
     isSwitchCompanyFormOpen = false;
     contextMenuItems = [
-        { label: 'Switch company', command: () => this.switchCompany() },
+        { label: 'Switch company', command: () => this.openDialog() },
         { label: 'Logout', command: () => this.logout() }
     ];
 
     constructor(public layoutService: LayoutService,
         private readonly tokenStorageService: TokenStorageService,
         private readonly router: Router,
-        private readonly companyService: CompaniesService) {
-        this.companyName = JSON.parse(localStorage.getItem(COMPANY))?.label;
+        private readonly companyService: CompaniesService,
+        public messageService: MessageService) {
+        this.companyName = JSON.parse(localStorage.getItem(COMPANY))?.companyName;
         this.companyService.changedCompanyLabel.subscribe(() =>
-            this.companyName = JSON.parse(localStorage.getItem(COMPANY))?.label);
+            this.companyName = JSON.parse(localStorage.getItem(COMPANY))?.companyName);
+    }
+
+    async ngOnInit() {
+        this.fetchCompanies();
+    }
+
+    async fetchCompanies() {
+        try {
+            this.isValid = false;
+            let response = await this.companyService.getCompanies();
+            this.companyOptions = response.data.map(item => ({ label: item.companyName, value: item }));
+            this.companyOptions.unshift({ label: 'Select Company', value: '' })
+        } catch (error) {
+            this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
+        }
+    }
+
+    selectCompany(company) {
+        if (company.value.value) {
+            this.isValid = true;
+            this.selectedCompany = company.value.value;
+        } else {
+            this.isValid = false;
+            this.selectedCompany = null;
+        }
+    }
+
+    switchCompany() {
+        localStorage.setItem(COMPANY, JSON.stringify(structuredClone(this.selectedCompany)));
+        this.layoutService.swicthCompany.next(true);
+        this.companyService.changedCompanyLabel.next(true);
+        this.selectedCompany = null;
+        this.companyOptions = [];
+        this.isSwitchCompanyFormOpen = false;
+        this.router.navigate(['/main']);
     }
 
     showContextMenu(event: MouseEvent) {
@@ -45,8 +85,9 @@ export class AppTopBarComponent {
         this.contextMenu.show(event);
     }
 
-    switchCompany() {
+    async openDialog() {
         this.isSwitchCompanyFormOpen = true;
+        await this.fetchCompanies()
     }
 
     cancel() {

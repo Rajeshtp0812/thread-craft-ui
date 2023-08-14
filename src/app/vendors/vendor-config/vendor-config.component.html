@@ -1,4 +1,12 @@
-<app-common-form
-    (formData)="formData($event)"
-    [wrapperComponentName]="'vendor'"
-></app-common-form>
+<ng-container>
+    <div class="col-12">
+        <label htmlFor="ownerName" class="">Owner Name</label>
+        <input pInputText id="ownerName" type="text" [(ngModel)]="ownerName" />
+    </div>
+    <app-common-form
+        (formData)="setFormData($event)"
+        [updateFormData]="vendorDetail"
+        [clearForm]="isDialogOpen"
+        [wrapperComponentName]="'vendor'"
+    ></app-common-form>
+</ng-container>

@@ -50,6 +50,8 @@ export class LayoutService {
 
     overlayOpen$ = this.overlayOpen.asObservable();
 
+    swicthCompany = new Subject();
+
     onMenuToggle() {
         if (this.isOverlay()) {
             this.state.overlayMenuActive = !this.state.overlayMenuActive;
