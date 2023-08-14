@@ -1,0 +1,46 @@
+<div class="col-12 card">
+    <h5>Companies</h5>
+    <app-companies-table
+        (openCompaniesForm)="openCompaniesForm($event)"
+    ></app-companies-table>
+</div>
+
+<p-dialog
+    [(visible)]="isCompanyFormOpen"
+    [style]="{ width: '650px' }"
+    header="{{
+        selectedModal === 'edit' ? 'Edit Company Details' : 'Create New Company'
+    }}"
+    [modal]="true"
+    class="p-fluid"
+    [resizable]="true"
+    [closable]="false"
+    [maximizable]="true"
+>
+    <app-common-form
+        (formData)="setFormData($event)"
+        [wrapperComponentName]="'company'"
+        [updateFormData]="editCompanyDetail"
+        [clearForm]="isCompanyFormOpen"
+    ></app-common-form>
+
+    <ng-template pTemplate="footer">
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="Cancel"
+            class="p-button-raised p-button-secondary"
+            (click)="closeForm()"
+        ></button>
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="{{ selectedModal === 'edit' ? 'Save' : 'Create' }}"
+            class="p-button-raised"
+            [disabled]="!isFormValid"
+            (click)="saveCompany()"
+        ></button>
+    </ng-template>
+</p-dialog>

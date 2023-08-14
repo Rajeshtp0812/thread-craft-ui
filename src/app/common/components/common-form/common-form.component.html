@@ -1,0 +1,96 @@
+<div class="col-12">
+    <form [formGroup]="form">
+        <div class="p-fluid p-formgrid grid">
+            <div class="col-12">
+                <label
+                    htmlFor="companyName"
+                    class="{{ formRequiredFields.companyName }}"
+                    >Company Name</label
+                >
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="companyName"
+                />
+            </div>
+            <div class="col-12 md:col-6">
+                <label htmlFor="email" class="{{ formRequiredFields.email }}"
+                    >Email</label
+                >
+                <input
+                    pInputText
+                    id="email"
+                    type="text"
+                    formControlName="email"
+                />
+            </div>
+            <div class="col-12 md:col-6">
+                <label
+                    htmlFor="contact"
+                    class="{{ formRequiredFields.contact }}"
+                    >Contact</label
+                >
+                <input
+                    pInputText
+                    id="contact"
+                    type="text"
+                    formControlName="contact"
+                />
+            </div>
+            <div class="col-12">
+                <label htmlFor="gst" class="{{ formRequiredFields.gst }}"
+                    >GST</label
+                >
+                <input pInputText id="gst" type="text" formControlName="gst" />
+            </div>
+            <div class="col-12">
+                <label
+                    htmlFor="address"
+                    class="{{ formRequiredFields.address }}"
+                    >Address</label
+                >
+                <input
+                    pInputTextarea
+                    id="address"
+                    rows="4"
+                    formControlName="address"
+                />
+            </div>
+            <div class="col-12 md:col-6">
+                <label htmlFor="state" class="{{ formRequiredFields.state }}"
+                    >State</label
+                >
+                <p-dropdown
+                    [options]="statesOptions"
+                    (onChange)="selectState($event)"
+                    [filter]="true"
+                    formControlName="state"
+                ></p-dropdown>
+            </div>
+            <div class="col-12 md:col-6">
+                <label htmlFor="city" class="{{ formRequiredFields.city }}"
+                    >City</label
+                >
+                <p-dropdown
+                    [options]="citiesOptions"
+                    [(ngModel)]="selectedCity"
+                    [filter]="true"
+                    [disabled]="!citiesOptions?.length"
+                    formControlName="city"
+                ></p-dropdown>
+            </div>
+            <div class="col-12 md:col-6">
+                <label htmlFor="zip" class="{{ formRequiredFields.pinCode }}"
+                    >Pincode</label
+                >
+                <input
+                    pInputText
+                    id="zip"
+                    type="text"
+                    formControlName="pinCode"
+                />
+            </div>
+        </div>
+    </form>
+</div>

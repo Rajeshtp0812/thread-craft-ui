@@ -1,0 +1,39 @@
+<div class="col-12 card">
+    <h5>Vendors</h5>
+    <app-vendor-table
+        (openCompaniesForm)="openCompaniesForm($event)"
+    ></app-vendor-table>
+</div>
+
+<p-dialog
+    [(visible)]="isVendorFormOpen"
+    [style]="{ width: '650px' }"
+    header="{{
+        selectedModal === 'edit' ? 'Edit Vendor Details' : 'Create New Vendor'
+    }}"
+    [modal]="true"
+    class="p-fluid"
+    [resizable]="true"
+    [closable]="false"
+    [maximizable]="true"
+>
+    <app-vendor-config></app-vendor-config>
+
+    <ng-template pTemplate="footer">
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="Cancel"
+            class="p-button-raised p-button-secondary"
+            (click)="cancel()"
+        ></button>
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="{{ selectedModal === 'edit' ? 'Save' : 'Create' }}"
+            class="p-button-raised"
+        ></button>
+    </ng-template>
+</p-dialog>

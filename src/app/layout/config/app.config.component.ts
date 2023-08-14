@@ -1,18 +1,26 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { LayoutService } from "../service/app.layout.service";
 import { MenuService } from "../app.menu.service";
+import { USER_PREFERENCES } from '../../common/constants';
+import { CommonUtilsService } from '../../common/service/common-utils.service';
 
 @Component({
     selector: 'app-config',
     templateUrl: './app.config.component.html'
 })
-export class AppConfigComponent {
+export class AppConfigComponent implements OnInit {
 
     @Input() minimal: boolean = false;
 
     scales: number[] = [12, 13, 14, 15, 16];
 
-    constructor(public layoutService: LayoutService, public menuService: MenuService) { }
+    constructor(public layoutService: LayoutService,
+        public menuService: MenuService,
+        public commonUtil: CommonUtilsService) { }
+
+    ngOnInit(): void {
+
+    }
 
     get visible(): boolean {
         return this.layoutService.state.configSidebarVisible;
@@ -36,14 +44,7 @@ export class AppConfigComponent {
 
     set menuMode(_val: string) {
         this.layoutService.config.menuMode = _val;
-    }
-
-    get inputStyle(): string {
-        return this.layoutService.config.inputStyle;
-    }
-
-    set inputStyle(_val: string) {
-        this.layoutService.config.inputStyle = _val;
+        this.commonUtil.saveUserPreference();
     }
 
     onConfigButtonClick() {
@@ -51,14 +52,7 @@ export class AppConfigComponent {
     }
 
     changeTheme(theme: string, colorScheme: string) {
-        const themeLink = <HTMLLinkElement>document.getElementById('theme-css');
-        const newHref = themeLink.getAttribute('href')!.replace(this.layoutService.config.theme, theme);
-        this.layoutService.config.colorScheme
-        this.replaceThemeLink(newHref, () => {
-            this.layoutService.config.theme = theme;
-            this.layoutService.config.colorScheme = colorScheme;
-            this.layoutService.onConfigUpdate();
-        });
+        this.commonUtil.changeTheme(theme, colorScheme);
     }
 
     replaceThemeLink(href: string, onComplete: Function) {
@@ -90,5 +84,7 @@ export class AppConfigComponent {
 
     applyScale() {
         document.documentElement.style.fontSize = this.scale + 'px';
+        this.commonUtil.saveUserPreference();
+
     }
 }
