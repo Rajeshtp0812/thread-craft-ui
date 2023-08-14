@@ -19,3 +19,9 @@ td {
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+
+
+.required:after {
+  content:" *";
+  color: red;
+}

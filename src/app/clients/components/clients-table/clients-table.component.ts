@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Table } from 'primeng/table';
 import { MODAL_TYPE } from '../../../common/constants';
 import { ContextMenu } from 'primeng/contextmenu';
+import { ClientService } from '../../client.service';
 
 @Component({
   selector: 'app-clients-table',
@@ -33,9 +34,15 @@ export class ClientsTableComponent {
   @ViewChild('cm') contextMenu: ContextMenu
 
 
-  constructor() { }
+  constructor(public clientService: ClientService) { }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    try {
+      let clientData = await this.clientService.getClients();
+    } catch (error) {
+
+    }
+
   }
 
   onContextMenu(event: MouseEvent, type: String, data = null) {

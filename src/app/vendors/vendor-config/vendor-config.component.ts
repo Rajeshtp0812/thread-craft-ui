@@ -7,4 +7,9 @@ import { Component } from '@angular/core';
 })
 export class VendorConfigComponent {
 
+  isFormValid = false;
+
+  formData(data: any) {
+    this.isFormValid = data.status;
+  }
 }

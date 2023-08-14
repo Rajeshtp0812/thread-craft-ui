@@ -7,6 +7,10 @@ import { FormsModule } from '@angular/forms';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
+import { MessageModule } from 'primeng/message';
+import { MessageService } from 'primeng/api';
+import { MessagesModule } from 'primeng/messages';
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
     imports: [
@@ -16,8 +20,9 @@ import { DropdownModule } from 'primeng/dropdown';
         InputTextModule,
         FormsModule,
         PasswordModule,
-        DropdownModule,
+        DropdownModule
     ],
+    providers: [],
     declarations: [LoginComponent]
 })
 export class LoginModule { }

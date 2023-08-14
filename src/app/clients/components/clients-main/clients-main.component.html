@@ -1,19 +1,43 @@
 <div class="col-12 card">
     <h5>Clients</h5>
-    <app-clients-table (openCompaniesForm)="openCompaniesForm($event)"></app-clients-table>
+    <app-clients-table
+        (openCompaniesForm)="openCompaniesForm($event)"
+    ></app-clients-table>
 </div>
 
-
-<p-dialog [(visible)]="isClientFormOpen" [style]="{width: '650px'}"
-    header="{{selectedModal === 'edit' ? 'Edit Client Details' : 'Create New Client'}}" [modal]="true" class="p-fluid"
-    [resizable]="true" [closable]="false" [maximizable]="true">
-
-    <app-common-form></app-common-form>
+<p-dialog
+    [(visible)]="isClientFormOpen"
+    [style]="{ width: '650px' }"
+    header="{{
+        selectedModal === 'edit' ? 'Edit Client Details' : 'Create New Client'
+    }}"
+    [modal]="true"
+    class="p-fluid"
+    [resizable]="true"
+    [closable]="false"
+    [maximizable]="true"
+>
+    <app-common-form
+        (formData)="formData($event)"
+        [wrapperComponentName]="'client'"
+    ></app-common-form>
 
     <ng-template pTemplate="footer">
-        <button pButton pRipple type="button" label="Cancel" class="p-button-raised p-button-secondary"
-            (click)="cancel()"></button>
-        <button pButton pRipple type="button" label="{{selectedModal === 'edit' ? 'Save' : 'Create'}}"
-            class="p-button-raised"></button>
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="Cancel"
+            class="p-button-raised p-button-secondary"
+            (click)="cancel()"
+        ></button>
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="{{ selectedModal === 'edit' ? 'Save' : 'Create' }}"
+            class="p-button-raised"
+            [disabled]="!isFormValid"
+        ></button>
     </ng-template>
 </p-dialog>

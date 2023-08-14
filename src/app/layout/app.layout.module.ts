@@ -18,6 +18,9 @@ import { AppConfigModule } from './config/config.module';
 import { AppSidebarComponent } from "./app.sidebar.component";
 import { AppLayoutComponent } from "./app.layout.component";
 import { ContextMenuModule } from 'primeng/contextmenu';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
 
 @NgModule({
     declarations: [
@@ -30,6 +33,7 @@ import { ContextMenuModule } from 'primeng/contextmenu';
     ],
     imports: [
         BrowserModule,
+        AppConfigModule,
         FormsModule,
         HttpClientModule,
         BrowserAnimationsModule,
@@ -40,8 +44,10 @@ import { ContextMenuModule } from 'primeng/contextmenu';
         InputSwitchModule,
         RippleModule,
         RouterModule,
-        AppConfigModule,
-        ContextMenuModule
+        ContextMenuModule,
+        DialogModule,
+        ButtonModule,
+        DropdownModule
     ],
     exports: [AppLayoutComponent]
 })

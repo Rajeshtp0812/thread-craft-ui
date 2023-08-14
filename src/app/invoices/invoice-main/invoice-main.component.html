@@ -1,0 +1,54 @@
+<div class="col-12 card">
+    <h5>Invoices</h5>
+    <app-invoice-table
+        (openCompaniesForm)="openCompaniesForm($event)"
+    ></app-invoice-table>
+</div>
+
+<p-dialog
+    [(visible)]="isInvoiceDialogOpen"
+    [style]="{ width: '850px' }"
+    header="{{
+        selectedModal === 'edit' ? 'Edit Invoice' : 'Create New Invoice'
+    }}"
+    [modal]="true"
+    class="p-fluid"
+    [resizable]="true"
+    [closable]="false"
+    [maximizable]="true"
+>
+    <p-steps
+        [model]="items"
+        [readonly]="true"
+        [(activeIndex)]="activeTabIndex"
+    ></p-steps>
+
+    <app-invoice-config *ngIf="activeTabIndex === 0"></app-invoice-config>
+    <app-invoice-preview *ngIf="activeTabIndex === 1"></app-invoice-preview>
+
+    <ng-template pTemplate="footer">
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="{{ activeTabIndex === 1 ? 'Back' : 'Preview' }}"
+            class="p-button-raised p-button-secondary"
+            (click)="preview()"
+        ></button>
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="Cancel"
+            class="p-button-raised p-button-secondary"
+            (click)="cancel()"
+        ></button>
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="{{ selectedModal === 'edit' ? 'Save' : 'Create' }}"
+            class="p-button-raised"
+        ></button>
+    </ng-template>
+</p-dialog>

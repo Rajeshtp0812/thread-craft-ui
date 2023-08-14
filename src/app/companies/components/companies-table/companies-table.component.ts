@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Table } from 'primeng/table';
 import { MENUS, MODAL_TYPE } from '../../../common/constants';
 import { ContextMenu } from 'primeng/contextmenu';
+import { CompaniesService } from '../../companies.service';
 
 @Component({
   selector: 'app-companies-table',
@@ -19,15 +20,7 @@ export class CompaniesTableComponent {
     { field: 'address', header: 'Address' },
     { field: 'gst', header: 'GST' },
   ];
-  data = [{
-    companyName: 'Saba Fashion',
-    email: 'sabafashion@gmail.com',
-    contact: 9874563210,
-    state: 'Maharashtra',
-    city: 'Mumbai',
-    address: 'Gala No 12, Kidwai Nagar Wadala (East)',
-    gst: ''
-  }];
+  data = [];
   contextMenus: any[];
   frozen = true;
   @Output() openCompaniesForm = new EventEmitter();
@@ -35,10 +28,21 @@ export class CompaniesTableComponent {
 
   @ViewChild('cm') contextMenu: ContextMenu
 
-  constructor() { }
+  constructor(private readonly companyService: CompaniesService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.filterFields = this.cols.map(col => col.field);
+    this.fetchData();
+    this.companyService.refetchData.subscribe(value => this.fetchData());
+  }
+
+  async fetchData() {
+    try {
+      let response: any = await this.companyService.getCompanies();
+      this.data = response.data;
+    } catch (error) {
+
+    }
   }
 
   onContextMenu(event: MouseEvent, type: String, data = null) {
@@ -51,7 +55,7 @@ export class CompaniesTableComponent {
           command: () => this.openCompaniesForm.emit({ modalType: MODAL_TYPE.ADD, data: null })
         },
       ];
-    } else if (type === 'rowMenu') {
+    } else if (type === 'rowMenu' || event.type === 'contextmenu') {
       this.contextMenus = [
         {
           label: 'Edit',

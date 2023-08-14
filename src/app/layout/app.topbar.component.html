@@ -1,21 +1,71 @@
 <div class="layout-topbar">
-    <button #menubutton class="p-link layout-topbar-button" (click)="layoutService.onMenuToggle()">
+    <button
+        #menubutton
+        class="p-link layout-topbar-button"
+        (click)="layoutService.onMenuToggle()"
+    >
         <i class="pi pi-bars"></i>
     </button>
 
-    <a routerLink="/main"><span class="layout-topbar-logo">Company Name</span></a>
+    <a routerLink="/main"
+        ><span class="layout-topbar-logo">{{ companyName }}</span></a
+    >
 
-    <button #topbarmenubutton class="p-link layout-topbar-menu-button layout-topbar-button"
-        (click)="layoutService.showProfileSidebar()">
+    <button
+        #topbarmenubutton
+        class="p-link layout-topbar-menu-button layout-topbar-button"
+        (click)="layoutService.showProfileSidebar()"
+    >
         <i class="pi pi-ellipsis-v"></i>
     </button>
 
-    <div #topbarmenu class="layout-topbar-menu"
-        [ngClass]="{'layout-topbar-menu-mobile-active': layoutService.state.profileSidebarVisible}">
-        <button class="p-link layout-topbar-button" (click)="showContextMenu($event)">
+    <div
+        #topbarmenu
+        class="layout-topbar-menu"
+        [ngClass]="{
+            'layout-topbar-menu-mobile-active':
+                layoutService.state.profileSidebarVisible
+        }"
+    >
+        <button
+            class="p-link layout-topbar-button"
+            (click)="showContextMenu($event)"
+        >
             <i class="pi pi-user"></i>
             <span>Profile</span>
         </button>
     </div>
 </div>
-<p-contextMenu #cm [model]="contextMenuItems" triggerEvent="click"></p-contextMenu>
+<p-contextMenu
+    #cm
+    [model]="contextMenuItems"
+    triggerEvent="click"
+></p-contextMenu>
+
+<p-dialog
+    [(visible)]="isSwitchCompanyFormOpen"
+    [style]="{ width: '600px', 'min-height': '220px' }"
+    [modal]="true"
+    class="p-fluid"
+    [closable]="false"
+>
+    <p-dropdown [options]="[]"></p-dropdown>
+
+    <ng-template pTemplate="footer">
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="Cancel"
+            class="p-button-raised p-button-secondary"
+            (click)="cancel()"
+        ></button>
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="Submit"
+            class="p-button-raised"
+        ></button>
+    </ng-template>
+</p-dialog>

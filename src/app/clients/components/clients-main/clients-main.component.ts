@@ -10,6 +10,7 @@ export class ClientsMainComponent {
   isClientFormOpen = false;
   editProductDetails: any = null;
   selectedModal: MODAL_TYPE;
+  isFormValid = false;
 
   openCompaniesForm(event) {
     this.isClientFormOpen = !this.isClientFormOpen;
@@ -22,5 +23,9 @@ export class ClientsMainComponent {
 
   cancel() {
     this.isClientFormOpen = false;
+  }
+
+  formData(data: any) {
+    this.isFormValid = data.status;
   }
 }
