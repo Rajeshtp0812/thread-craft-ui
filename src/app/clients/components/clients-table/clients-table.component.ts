@@ -3,6 +3,7 @@ import { Table } from 'primeng/table';
 import { MODAL_TYPE } from '../../../common/constants';
 import { ContextMenu } from 'primeng/contextmenu';
 import { ClientService } from '../../client.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-clients-table',
@@ -12,21 +13,15 @@ import { ClientService } from '../../client.service';
 export class ClientsTableComponent {
   isDataLoading = false;
   cols = [
-    { field: 'name', header: 'Company Name' },
+    { field: 'companyName', header: 'Company' },
     { field: 'email', header: 'Email' },
+    { field: 'contact', header: 'Contact' },
     { field: 'state', header: 'State' },
     { field: 'city', header: 'City' },
+    { field: 'address', header: 'Address' },
     { field: 'pinCode', header: 'Pin Code' },
-    { field: 'address', header: 'Address' }];
-  data = [{
-    "name": "1000",
-    "email": "f230fh0g3",
-    "state": "Product Description",
-    "city": "bamboo-watch.jpg",
-    "pinCode": 65,
-    "address": "Accessories",
-    "companyId": 24
-  }];
+    { field: 'gst', header: 'GST' }];
+  data = [];
   contextMenus: any[];
   @Output() openCompaniesForm = new EventEmitter();
   filterFields = [];
@@ -34,15 +29,24 @@ export class ClientsTableComponent {
   @ViewChild('cm') contextMenu: ContextMenu
 
 
-  constructor(public clientService: ClientService) { }
+  constructor(public clientService: ClientService,
+    private readonly messageService: MessageService) { }
 
   async ngOnInit() {
+    this.fetchData();
+    this.clientService.refetchData.subscribe(value => this.fetchData());
+  }
+
+  async fetchData() {
+    this.isDataLoading = true;
     try {
-      let clientData = await this.clientService.getClients();
+      let response: any = await this.clientService.getClients();
+      this.data = response.data;
     } catch (error) {
-
+      this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
+    } finally {
+      this.isDataLoading = false;
     }
-
   }
 
   onContextMenu(event: MouseEvent, type: String, data = null) {
@@ -74,8 +78,13 @@ export class ClientsTableComponent {
     this.contextMenu.show(event);
   }
 
-  deleteClient(data) {
-    console.log('delete')
+  async deleteClient(data) {
+    try {
+      await this.clientService.deleteClient(data.item.data.clientId);
+      this.clientService.refetchData.next(true);
+    } catch (error) {
+      this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
+    }
   }
 
 

@@ -18,8 +18,10 @@
     [maximizable]="true"
 >
     <app-common-form
-        (formData)="formData($event)"
+        (formData)="setFormData($event)"
         [wrapperComponentName]="'client'"
+        [updateFormData]="editClientDetail"
+        [clearForm]="isClientFormOpen"
     ></app-common-form>
 
     <ng-template pTemplate="footer">
@@ -29,7 +31,7 @@
             type="button"
             label="Cancel"
             class="p-button-raised p-button-secondary"
-            (click)="cancel()"
+            (click)="closeForm()"
         ></button>
         <button
             pButton
@@ -38,6 +40,7 @@
             label="{{ selectedModal === 'edit' ? 'Save' : 'Create' }}"
             class="p-button-raised"
             [disabled]="!isFormValid"
+            (click)="saveClient()"
         ></button>
     </ng-template>
 </p-dialog>

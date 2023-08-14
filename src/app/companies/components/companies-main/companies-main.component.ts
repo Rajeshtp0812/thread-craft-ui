@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { COMPANY, MODAL_TYPE } from '../../../common/constants';
 import { CompaniesService } from '../../companies.service';
 import { MessageService } from 'primeng/api';
@@ -49,10 +49,9 @@ export class CompaniesMainComponent {
         this.messageService.add({ severity: 'success', summary: 'Company created successfully', detail: '' });
       } else if (this.selectedModal === MODAL_TYPE.EDIT) {
         await this.companyService.updateCompany(this.editCompanyDetail.companyId, this.formData);
-        if (this.selectedCompany.value.companyId === this.editCompanyDetail.companyId) {
-          this.selectedCompany.label = this.formData.companyName;
-          this.selectedCompany.value.companyName = this.formData.companyName;
-          localStorage.setItem(COMPANY, JSON.stringify(this.selectedCompany));
+        if (this.selectedCompany.companyId === this.editCompanyDetail.companyId) {
+          this.selectedCompany.companyName = this.formData.companyName;
+          localStorage.setItem(COMPANY, JSON.stringify(structuredClone(this.selectedCompany)));
           this.companyService.changedCompanyLabel.next(true);
         }
         this.messageService.add({ severity: 'success', summary: 'Company updated succesfully', detail: '' });

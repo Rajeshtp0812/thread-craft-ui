@@ -6,5 +6,6 @@ export const environment = {
   productServiceURL: BASE_URL + 'product/',
   invoiceServiceURL: BASE_URL + 'invoice/',
   clientServiceURL: BASE_URL + 'client/',
-  companyURL: BASE_URL + 'company/'
+  companyURL: BASE_URL + 'company/',
+  vendorURL: BASE_URL + 'vendor/'
 };

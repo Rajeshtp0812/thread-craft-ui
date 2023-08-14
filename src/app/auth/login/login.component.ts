@@ -21,7 +21,7 @@ import { COMPANY } from '../../common/constants';
 export class LoginComponent implements OnInit {
     username!: string;
     password!: string;
-    selectedCompany!: string;
+    selectedCompany!: any;
     companyOptions = [];
 
     constructor(private readonly userService: UserService,
@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
         try {
             let response = await this.userService.login(this.username, this.password);
             this.tokenStorage.saveToken(response.data.token);
-            localStorage.setItem(COMPANY, JSON.stringify(this.selectedCompany));
+            localStorage.setItem(COMPANY, JSON.stringify(this.selectedCompany.value));
             this.router.navigate(['/main']);
         } catch (error) {
             this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });

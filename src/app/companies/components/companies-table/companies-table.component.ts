@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Table } from 'primeng/table';
-import { MENUS, MODAL_TYPE } from '../../../common/constants';
+import { MODAL_TYPE } from '../../../common/constants';
 import { ContextMenu } from 'primeng/contextmenu';
 import { CompaniesService } from '../../companies.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-companies-table',
@@ -28,7 +29,8 @@ export class CompaniesTableComponent {
 
   @ViewChild('cm') contextMenu: ContextMenu
 
-  constructor(private readonly companyService: CompaniesService) { }
+  constructor(private readonly companyService: CompaniesService,
+    private readonly messageService: MessageService) { }
 
   ngOnInit() {
     this.filterFields = this.cols.map(col => col.field);
@@ -37,11 +39,14 @@ export class CompaniesTableComponent {
   }
 
   async fetchData() {
+    this.isDataLoading = true;
     try {
       let response: any = await this.companyService.getCompanies();
       this.data = response.data;
     } catch (error) {
-
+      this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
+    } finally {
+      this.isDataLoading = false;
     }
   }
 
@@ -74,8 +79,17 @@ export class CompaniesTableComponent {
     this.contextMenu.show(event);
   }
 
-  deleteCompany(data) {
-    console.log('delete')
+  async deleteCompany(data) {
+    if (this.data.length === 1) {
+      this.messageService.add({ severity: 'info', summary: 'Cannot delete. At least one company must remain', detail: '' });
+      return;
+    }
+    try {
+      await this.companyService.deleteCompany(data.item.data.companyId);
+      this.companyService.refetchData.next(true);
+    } catch (error) {
+      this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
+    }
   }
 
   onGlobalFilter(table: Table, event: Event) {

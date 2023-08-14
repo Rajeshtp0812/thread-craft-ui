@@ -17,7 +17,11 @@
     [closable]="false"
     [maximizable]="true"
 >
-    <app-vendor-config></app-vendor-config>
+    <app-vendor-config
+        (formDataEmitter)="setFormData($event)"
+        [isVendorFormOpen]="isVendorFormOpen"
+        [editVendorDetail]="editVendorDetail"
+    ></app-vendor-config>
 
     <ng-template pTemplate="footer">
         <button
@@ -26,7 +30,7 @@
             type="button"
             label="Cancel"
             class="p-button-raised p-button-secondary"
-            (click)="cancel()"
+            (click)="closeForm()"
         ></button>
         <button
             pButton
@@ -34,6 +38,8 @@
             type="button"
             label="{{ selectedModal === 'edit' ? 'Save' : 'Create' }}"
             class="p-button-raised"
+            [disabled]="!isFormValid"
+            (click)="saveClient()"
         ></button>
     </ng-template>
 </p-dialog>
