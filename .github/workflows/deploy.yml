@@ -27,6 +27,11 @@ jobs:
                   npm install
                   ng build
 
+            - name: Write SSH private key to file
+              run: |
+                  echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+                  chmod 600 private_key.pem
+
             - name: Deploy to cPanel
               run: |
-                  scp -r -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} dist/* clpcrmti@clpcrmti.com:/home/clpcrmti/public_html/thread-craft
+                  scp -r -o StrictHostKeyChecking=no -i private_key.pem dist/* clpcrmti@clpcrmti.com:/home/clpcrmti/public_html/thread-craft
