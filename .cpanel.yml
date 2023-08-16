@@ -2,4 +2,4 @@
 deployment:
     tasks:
         - export DEPLOYPATH=/home/clpcrmti/public_html/
-        - /bin/cp * $DEPLOYPATH
+        - /bin/cp -R dist/thread-craft $DEPLOYPATH
