@@ -1,0 +1,40 @@
+<div class="col-12 card">
+    <h5>Products</h5>
+    <app-product-table
+        (openProductForm)="openProductForm($event)"
+    ></app-product-table>
+</div>
+<p-dialog
+    [(visible)]="isProductFormOpen"
+    [style]="{ width: '700px' }"
+    header="{{
+        selectedModal === 'edit' ? 'Edit Product Details' : 'Add New Product'
+    }}"
+    [modal]="true"
+    class="p-fluid"
+    [resizable]="true"
+    [closable]="false"
+    [maximizable]="true"
+>
+    <app-product-config (formData)="setFormData($event)"></app-product-config>
+
+    <ng-template pTemplate="footer">
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="Cancel"
+            class="p-button-raised p-button-secondary"
+            (click)="closeForm()"
+        ></button>
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="{{ selectedModal === 'edit' ? 'Save' : 'Create' }}"
+            class="p-button-raised"
+            [disabled]="!isFormValid"
+            (click)="saveProduct()"
+        ></button>
+    </ng-template>
+</p-dialog>

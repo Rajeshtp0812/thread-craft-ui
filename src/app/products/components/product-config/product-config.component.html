@@ -1,0 +1,169 @@
+<div class="col-12">
+    <form [formGroup]="form">
+        <div class="p-fluid p-formgrid grid">
+            <div class="col-12 md:col-4">
+                <label htmlFor="contact">Date</label>
+                <p-calendar
+                    appendTo="body"
+                    dateFormat="dd.mm.yy"
+                    formControlName="date"
+                ></p-calendar>
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName">Details</label>
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="details"
+                />
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName">Rate</label>
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="rate"
+                />
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName">Code</label>
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="code"
+                />
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName">Run No</label>
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="runNo"
+                />
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName">Bill No</label>
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="billNo"
+                />
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName">Average</label>
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="average"
+                />
+                <p>{{ evaluatedResults["average"] }}</p>
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName">Embroidary</label>
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="embroidary"
+                />
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName">Fitting Stich</label>
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="fittingStich"
+                />
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName">Button Stich</label>
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="buttonStich"
+                />
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName">Print</label>
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="print"
+                />
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName">Pintex</label>
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="pintex"
+                />
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName">K-Making</label>
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="kMaking"
+                />
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName">Making</label>
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="making"
+                />
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName">Tag</label>
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="tag"
+                />
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName">Label</label>
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="label"
+                />
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName">Canvas</label>
+                <input
+                    pInputText
+                    id="companyName"
+                    type="text"
+                    formControlName="canvas"
+                />
+            </div>
+        </div>
+        <p-fileUpload
+            chooseLabel="Choose"
+            name="demo[]"
+            accept="image/*"
+            maxFileSize="1000000"
+            (onSelect)="onUpload($event)"
+            uploadStyleClass="hide-upload-button"
+            previewWidth="70"
+        >
+        </p-fileUpload>
+    </form>
+</div>

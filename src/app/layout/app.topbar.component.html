@@ -44,7 +44,7 @@
 
 <p-dialog
     [(visible)]="isSwitchCompanyFormOpen"
-    [style]="{ width: '600px', 'min-height': '320px' }"
+    [style]="{ width: '400px', 'min-height': '150px' }"
     [modal]="true"
     class="p-fluid"
     [closable]="false"
@@ -53,6 +53,7 @@
         [options]="companyOptions"
         (onChange)="selectCompany($event)"
         optionLabel="label"
+        appendTo="body"
     ></p-dropdown>
 
     <ng-template pTemplate="footer">

@@ -14,6 +14,7 @@ import { AuthGuard } from './auth/services/auth.guard';
                     { path: 'clients', loadChildren: () => import('./clients/clients.module').then(m => m.ClientsModule) },
                     { path: 'vendors', loadChildren: () => import('./vendors/vendors.module').then(m => m.VendorsModule) },
                     { path: 'invoices', loadChildren: () => import('./invoices/invoices.module').then(m => m.InvoicesModule) },
+                    { path: 'products', loadChildren: () => import('./products/products.module').then(m => m.ProductsModule) },
                     { path: 'configuration', loadChildren: () => import('./companies/companies.module').then(m => m.CompaniesModule) },
                 ],
                 canActivate: [AuthGuard]
