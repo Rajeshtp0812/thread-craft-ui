@@ -1,0 +1,31 @@
+name: Deploy to cPanel
+
+on:
+    push:
+        branches:
+            - master # Change this to your main branch name
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v2
+              with:
+                  node-version: 16.15.1 # Change this to your desired Node.js version
+
+            - name: Install dependencies
+              run: npm install
+
+            - name: Build Angular app
+              run: npm run build
+
+            - name: Deploy to cPanel
+              run: |
+                  mkdir dist-deploy
+                  cp -R dist/* dist-deploy/
+                  scp -r -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} dist-deploy/* clpcrmti@servers.com:/home/clpcrmti/public_html
