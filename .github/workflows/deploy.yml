@@ -34,4 +34,4 @@ jobs:
 
             - name: Deploy to cPanel
               run: |
-                  scp -r -o StrictHostKeyChecking=no -i private_key.pem dist/* clpcrmti@clpcrmti.com:/home/clpcrmti/public_html/thread-craft
+                  scp -r -o StrictHostKeyChecking=no -i private_key.pem dist/* clpcrmti@clpcrm.com:/home/clpcrmti/public_html/thread-craft
