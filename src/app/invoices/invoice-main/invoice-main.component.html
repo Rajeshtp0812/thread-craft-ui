@@ -7,7 +7,7 @@
 
 <p-dialog
     [(visible)]="isInvoiceDialogOpen"
-    [style]="{ width: '850px' }"
+    [style]="{ width: '950px' }"
     header="{{
         selectedModal === 'edit' ? 'Edit Invoice' : 'Create New Invoice'
     }}"
@@ -17,24 +17,11 @@
     [closable]="false"
     [maximizable]="true"
 >
-    <p-steps
-        [model]="items"
-        [readonly]="true"
-        [(activeIndex)]="activeTabIndex"
-    ></p-steps>
-
-    <app-invoice-config *ngIf="activeTabIndex === 0"></app-invoice-config>
-    <app-invoice-preview *ngIf="activeTabIndex === 1"></app-invoice-preview>
+    <app-invoice-config
+        [resetActiveIndex]="isInvoiceDialogOpen"
+    ></app-invoice-config>
 
     <ng-template pTemplate="footer">
-        <button
-            pButton
-            pRipple
-            type="button"
-            label="{{ activeTabIndex === 1 ? 'Back' : 'Preview' }}"
-            class="p-button-raised p-button-secondary"
-            (click)="preview()"
-        ></button>
         <button
             pButton
             pRipple

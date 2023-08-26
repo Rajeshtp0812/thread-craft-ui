@@ -10,7 +10,6 @@ export class InvoiceMainComponent {
   isInvoiceDialogOpen = false;
   editProductDetails: any = null;
   selectedModal: MODAL_TYPE;
-  activeTabIndex = 0;
   items = [
     { label: "Details" },
     { label: "Preview" }
@@ -27,15 +26,6 @@ export class InvoiceMainComponent {
 
   cancel() {
     this.isInvoiceDialogOpen = false;
-    this.activeTabIndex = 0;
-  }
-
-  preview() {
-    if (this.activeTabIndex === 1) {
-      this.activeTabIndex = 0
-    } else {
-      this.activeTabIndex = 1;
-    }
   }
 
 }

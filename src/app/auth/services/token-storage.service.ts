@@ -1,43 +1,49 @@
 import { Injectable } from '@angular/core';
 import jwt_decode from 'jwt-decode';
 
-
-const TOKEN_KEY = 'auth-token';
-const USER_KEY = 'auth-user';
+const ACCESS_TOKEN = 'auth-token';
+const REFRESH_TOKEN = 'refresh-token';
 
 @Injectable({
     providedIn: 'root'
 })
 export class TokenStorageService {
     refreshed = false;
+
     constructor() { }
+
     signOut(): void {
         window.sessionStorage.clear();
     }
-    public saveToken(token: string): void {
-        window.sessionStorage.removeItem(TOKEN_KEY);
-        window.sessionStorage.setItem(TOKEN_KEY, token);
+
+    public saveAccessToken(token: string): void {
+        window.sessionStorage.removeItem(ACCESS_TOKEN);
+        window.sessionStorage.setItem(ACCESS_TOKEN, token);
     }
-    public getToken(): string | null {
-        return window.sessionStorage.getItem(TOKEN_KEY) || null;
+
+    public getAccessToken(): string | null {
+        return window.sessionStorage.getItem(ACCESS_TOKEN) || null;
     }
-    public saveUser(user: any): void {
-        window.sessionStorage.removeItem(USER_KEY);
-        window.sessionStorage.setItem(USER_KEY, JSON.stringify(user));
-    }
-    public getUser(): any {
-        const user: any = window.sessionStorage.getItem(USER_KEY);
-        if (user) {
-            return jwt_decode(JSON.parse(user).access);
-        }
-        return {};
+
+    public saveRefreshToken(user: any): void {
+        window.sessionStorage.removeItem(REFRESH_TOKEN);
+        window.sessionStorage.setItem(REFRESH_TOKEN, JSON.stringify(user));
     }
 
     getRefreshToken() {
-        const user: any = window.sessionStorage.getItem(USER_KEY);
+        const user: any = window.sessionStorage.getItem(REFRESH_TOKEN);
         if (user) {
             return JSON.parse(user).refresh;
         }
         return null;
     }
+
+    getTokenExpirationTime() {
+        let token = jwt_decode(JSON.parse(ACCESS_TOKEN));
+        if (!token) {
+            return;
+        }
+        return token['exp'];
+    }
+
 }

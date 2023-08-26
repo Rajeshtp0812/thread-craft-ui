@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
+import { CommonModule, DatePipe } from '@angular/common';
 import { ProductsRoutingModule } from './products-routing.module';
 import { ProductTableComponent } from './components/product-table/product-table.component';
 import { ProductMainComponent } from './components/product-main/product-main.component';
@@ -13,7 +12,6 @@ import { ButtonModule } from 'primeng/button';
 import { FileUploadModule } from 'primeng/fileupload';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 
 @NgModule({
   declarations: [
@@ -33,6 +31,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ButtonModule,
     FileUploadModule,
     CalendarModule
-  ]
+  ],
+  providers: [DatePipe]
 })
 export class ProductsModule { }

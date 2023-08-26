@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { InvoicesRoutingModule } from './invoices-routing.module';
 import { InvoiceTableComponent } from './invoice-table/invoice-table.component';
 import { InvoiceMainComponent } from './invoice-main/invoice-main.component';
@@ -8,7 +7,6 @@ import { InvoiceConfigComponent } from './invoice-config/invoice-config.componen
 import { DialogModule } from 'primeng/dialog';
 import { StepsModule } from 'primeng/steps';
 import { ButtonModule } from 'primeng/button';
-import { InvoicePreviewComponent } from './invoice-preview/invoice-preview.component';
 import { AccordionModule } from 'primeng/accordion';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
@@ -17,13 +15,14 @@ import { FormsModule } from '@angular/forms';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { TableModule } from 'primeng/table';
 import { ContextMenuModule } from 'primeng/contextmenu';
+import { InputNumberModule } from 'primeng/inputnumber';
+
 
 @NgModule({
   declarations: [
     InvoiceTableComponent,
     InvoiceMainComponent,
     InvoiceConfigComponent,
-    InvoicePreviewComponent
   ],
   imports: [
     CommonModule,
@@ -38,7 +37,8 @@ import { ContextMenuModule } from 'primeng/contextmenu';
     CalendarModule,
     InputTextareaModule,
     TableModule,
-    ContextMenuModule
+    ContextMenuModule,
+    InputNumberModule
   ]
 })
 export class InvoicesModule { }

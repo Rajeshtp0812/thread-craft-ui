@@ -1,5 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CountryStateCityService } from '../../common/service/country-state-city.service';
+import { ClientService } from '../../clients/client.service';
+import { MessageService } from 'primeng/api';
+
+const requiredFields = []
+
+interface InvoiceItems {
+  id?: number | string,
+  code: string,
+  description: string,
+  hsnCode: string,
+  rate: number,
+  quantity: number,
+  amount: number
+}
+
+interface Invoice {
+  client?: any,
+  invoiceNumber?: string,
+  transportationType?: string,
+  supplyDate?: string,
+  address?: string,
+  state?: string,
+  city?: string,
+  invoiceItems: InvoiceItems[]
+}
 
 @Component({
   selector: 'app-invoice-config',
@@ -12,55 +37,80 @@ export class InvoiceConfigComponent {
   citiesOptions: string[] = [];
   selectedState = '';
   selectedCity = '';
+  activeIndex = -1;
+  clients = [];
+  isFormValid = false;
 
-  products!: any[];
-
-  statuses!: any[];
+  invoices: Invoice = { invoiceItems: [] };
 
   clonedProducts: { [s: string]: any } = {};
 
+  @Input() set resetActiveIndex(value) {
+    if (value) {
+      this.activeIndex = 0;
+    } else {
+      this.activeIndex = -1;
+    }
+  }
 
-  constructor(private readonly stateCityService: CountryStateCityService) { }
+
+  constructor(private readonly stateCityService: CountryStateCityService,
+    private readonly clientService: ClientService,
+    private readonly messageService: MessageService) { }
 
   ngOnInit(): void {
-    let states = this.stateCityService.getStatesByCountry('IN');
-    this.statesOptions = states.filter(state => !['Kenmore', 'Narora', 'Natwar', 'Paschim Medinipur', 'Vaishali'].includes(state));
+    this.statesOptions = this.stateCityService.getStatesByCountry('IN');
     this.statesOptions.unshift(this.select);
-
-    this.statuses = [
-      { label: 'In Stock', value: 'INSTOCK' },
-      { label: 'Low Stock', value: 'LOWSTOCK' },
-      { label: 'Out of Stock', value: 'OUTOFSTOCK' }
-    ];
-
-    this.products = [{
-      id: '1008',
-      code: 'vbb124btr',
-      name: 'Game Controller',
-      description: 'Product Description',
-      image: 'game-controller.jpg',
-      price: 99,
-      category: 'Electronics',
-      quantity: 2,
-      inventoryStatus: 'LOWSTOCK',
-      rating: 4
+    this.fetchClient();
+    this.invoices['invoiceItems'] = [{
+      id: 1,
+      code: '1254',
+      description: 'test1',
+      hsnCode: '548',
+      rate: 125,
+      quantity: 12,
+      amount: 120
     },
     {
-      id: '1009',
-      code: 'cm230f032',
-      name: 'Gaming Set',
-      description: 'Product Description',
-      image: 'gaming-set.jpg',
-      price: 299,
-      category: 'Electronics',
-      quantity: 63,
-      inventoryStatus: 'INSTOCK',
-      rating: 3
-    },]
+      id: 2,
+      code: '1254',
+      description: 'test2',
+      hsnCode: '548',
+      rate: 125,
+      quantity: 12,
+      amount: 120
+    },
+    {
+      id: 3,
+      code: '1254',
+      description: 'test3',
+      hsnCode: '548',
+      rate: 125,
+      quantity: 12,
+      amount: 120
+    },
+    {
+      id: 4,
+      code: '1254',
+      description: 'test4',
+      hsnCode: '548',
+      rate: 125,
+      quantity: 12,
+      amount: 120
+    }]
   }
 
   ngOnChanges() {
 
+  }
+
+  async fetchClient() {
+    try {
+      let clients = await this.clientService.getClients();
+      this.clients = clients?.data?.map(client => ({ label: client.companyName, value: client }));
+    } catch (err) {
+      this.messageService.add({ severity: "error", summary: "Unexpected error occured" });
+    }
   }
 
   selectState(event: any) {
@@ -73,6 +123,19 @@ export class InvoiceConfigComponent {
     }
   }
 
+  addRow() {
+    let row: InvoiceItems = { code: null, description: null, hsnCode: null, rate: null, quantity: null, amount: null }
+    this.invoices.invoiceItems.push(row);
+  }
+
+  deleteRow(index: number) {
+    this.invoices.invoiceItems.splice(index, 1);
+  }
+
+  modelChanged(event) {
+    console.log(event)
+  }
+
   onRowEditInit(product: any) {
     this.clonedProducts[product.id as string] = { ...product };
   }
@@ -82,7 +145,7 @@ export class InvoiceConfigComponent {
   }
 
   onRowEditCancel(product: any, index: number) {
-    this.products[index] = this.clonedProducts[product.id as string];
+    this.invoices[index] = this.clonedProducts[product.id as string];
     delete this.clonedProducts[product.id as string];
   }
 }

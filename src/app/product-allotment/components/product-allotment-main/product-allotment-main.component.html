@@ -1,0 +1,130 @@
+<div class="col-12 card">
+    <h5>Product Allotment</h5>
+    <app-product-allotment-table
+        (openAllottmentForm)="openCompaniesForm($event)"
+    ></app-product-allotment-table>
+</div>
+
+<p-dialog
+    [(visible)]="isAllotmentFormOpen"
+    [style]="{ width: '650px' }"
+    header="{{
+        selectedModal === 'edit'
+            ? 'Edit Product Allocation'
+            : 'Allocate Product to Vendor'
+    }}"
+    [modal]="true"
+    class="p-fluid"
+    [resizable]="true"
+    [closable]="false"
+    [maximizable]="true"
+>
+    <ng-template pTemplate="body">
+        <div class="col-12">
+            <form [formGroup]="form">
+                <div class="p-fluid p-formgrid grid">
+                    <div class="col-12 md:col-6">
+                        <label htmlFor="state" class="required">Vendor</label>
+                        <p-dropdown
+                            [options]="vendorOptions"
+                            [filter]="true"
+                            formControlName="vendor"
+                        ></p-dropdown>
+                    </div>
+                    <div class="col-12 md:col-6">
+                        <label htmlFor="city" class="required">Product</label>
+                        <p-dropdown
+                            [options]="productOptions"
+                            [filter]="true"
+                            formControlName="product"
+                        ></p-dropdown>
+                    </div>
+                    <div class="col-2">
+                        <label htmlFor="companyName" class="required"
+                            >Quantity</label
+                        >
+                        <p-inputNumber
+                            mode="decimal"
+                            [useGrouping]="false"
+                            formControlName="quantity"
+                        >
+                        </p-inputNumber>
+                    </div>
+                    <div class="col-12 md:col-5">
+                        <label htmlFor="email" class="required"
+                            >Vendor Rate</label
+                        >
+                        <p-inputNumber
+                            mode="decimal"
+                            [useGrouping]="false"
+                            formControlName="vendorRate"
+                        >
+                        </p-inputNumber>
+                    </div>
+                    <div class="col-12 md:col-5">
+                        <label htmlFor="contact">Delivery Date</label>
+                        <p-calendar
+                            appendTo="body"
+                            formControlName="deliveryDate"
+                        ></p-calendar>
+                    </div>
+                    <div class="col-4">
+                        <label htmlFor="gst">Total Amount</label>
+                        <p-inputNumber
+                            mode="decimal"
+                            [useGrouping]="false"
+                            formControlName="totalAmount"
+                        >
+                        </p-inputNumber>
+                    </div>
+                    <div class="col-12 md:col-4">
+                        <label htmlFor="zip">Paid</label>
+                        <p-inputNumber
+                            mode="decimal"
+                            [useGrouping]="false"
+                            formControlName="advancePayment"
+                        >
+                        </p-inputNumber>
+                    </div>
+                    <div class="col-12 md:col-4">
+                        <label htmlFor="zip">Balance</label>
+                        <p-inputNumber
+                            mode="decimal"
+                            [useGrouping]="false"
+                            formControlName="balanceAmount"
+                        >
+                        </p-inputNumber>
+                    </div>
+                    <div class="col-12">
+                        <label htmlFor="address">Description</label>
+                        <textarea
+                            pInputTextarea
+                            id="address"
+                            rows="4"
+                            formControlName="description"
+                        ></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="Cancel"
+            class="p-button-raised p-button-secondary"
+            (click)="closeForm()"
+        ></button>
+        <button
+            pButton
+            pRipple
+            type="button"
+            label="{{ selectedModal === 'edit' ? 'Save' : 'Create' }}"
+            class="p-button-raised"
+            [disabled]="!isFormValid"
+            (click)="saveClient()"
+        ></button>
+    </ng-template>
+</p-dialog>

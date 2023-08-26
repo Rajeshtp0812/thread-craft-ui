@@ -3,8 +3,6 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './layout/app.layout.module';
-import * as productService from './common/service/product.service';
-import { CountryService } from './common/service/country.service';
 import { CustomerService } from './common/service/customer.service';
 import { EventService } from './common/service/event.service';
 import { IconService } from './common/service/icon.service';
@@ -26,9 +24,12 @@ export function initApp(
 ) {
     return () => {
         let userPreferences: USER_PREFERENCE = JSON.parse(localStorage.getItem(USER_PREFERENCES));
-        layoutService.config.scale = userPreferences.scale;
-        layoutService.config.menuMode = userPreferences.drawerMode
-        commonUtilService.changeTheme(userPreferences.theme, userPreferences.colorScheme);
+        if (userPreferences) {
+            layoutService.config.scale = userPreferences.scale;
+            layoutService.config.menuMode = userPreferences.drawerMode
+            commonUtilService.changeTheme(userPreferences.theme, userPreferences.colorScheme);
+        }
+
     };
 }
 
@@ -50,8 +51,7 @@ export function initApp(
         },
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         { provide: APP_INITIALIZER, useFactory: initApp, multi: true, deps: [LayoutService, CommonUtilsService] },
-        CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, productService.ProductService, TokenStorageService, MessageService
+        CustomerService, EventService, IconService, NodeService, PhotoService, TokenStorageService, MessageService
     ],
     bootstrap: [AppComponent]
 })

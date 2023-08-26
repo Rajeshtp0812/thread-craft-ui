@@ -7,11 +7,14 @@ const AUTH_API = environment.authServiceURL;
 const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
+
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
+
     constructor(private http: HttpClient) { }
+
     login(email: string, password: string): Observable<any> {
         return this.http.post(AUTH_API + 'token/', {
             email,
@@ -20,6 +23,6 @@ export class AuthService {
     }
 
     refreshToken(refreshToken: any) {
-        return this.http.post(AUTH_API + 'token/refresh/', refreshToken, httpOptions);
+        return this.http.post(AUTH_API + 'refresh/', refreshToken, httpOptions);
     }
 }

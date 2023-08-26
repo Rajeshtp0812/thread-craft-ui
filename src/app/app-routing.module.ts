@@ -1,7 +1,7 @@
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { AppLayoutComponent } from "./layout/app.layout.component";
-import { AuthGuard } from './auth/services/auth.guard';
+import { isAuthGuard } from './auth/services/auth.guard';
 
 @NgModule({
     imports: [
@@ -16,8 +16,9 @@ import { AuthGuard } from './auth/services/auth.guard';
                     { path: 'invoices', loadChildren: () => import('./invoices/invoices.module').then(m => m.InvoicesModule) },
                     { path: 'products', loadChildren: () => import('./products/products.module').then(m => m.ProductsModule) },
                     { path: 'configuration', loadChildren: () => import('./companies/companies.module').then(m => m.CompaniesModule) },
+                    { path: 'product-allocation', loadChildren: () => import('./product-allotment/product-allotment.module').then(m => m.ProductAllotmentModule) },
                 ],
-                canActivate: [AuthGuard]
+                canActivate: [isAuthGuard]
             },
             { path: '', loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) },
 

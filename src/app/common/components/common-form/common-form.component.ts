@@ -61,8 +61,7 @@ export class CommonFormComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    let states = this.stateCityService.getStatesByCountry('IN');
-    this.statesOptions = states.filter(state => !['Kenmore', 'Narora', 'Natwar', 'Paschim Medinipur', 'Vaishali'].includes(state));
+    this.statesOptions = this.stateCityService.getStatesByCountry('IN');
     this.statesOptions.unshift(this.select);
     this.emitFormData()
   }

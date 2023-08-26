@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { ClientsRoutingModule } from './clients-routing.module';
 import { ClientsTableComponent } from './components/clients-table/clients-table.component';
 import { ClientsMainComponent } from './components/clients-main/clients-main.component';
@@ -14,8 +13,6 @@ import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { CommonsModule } from '../common/commons.module';
-
-
 
 @NgModule({
   declarations: [

@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { VendorsRoutingModule } from './vendors-routing.module';
 import { VendorMainComponent } from './vendor-main/vendor-main.component';
 import { VendorTableComponent } from './vendor-table/vendor-table.component';
@@ -13,7 +12,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
-
 
 @NgModule({
   declarations: [

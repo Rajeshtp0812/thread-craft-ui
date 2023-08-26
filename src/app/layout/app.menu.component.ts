@@ -38,7 +38,7 @@ export class AppMenuComponent implements OnInit {
                             {
                                 label: 'Allocate Products',
                                 icon: 'pi pi-fw pi-fw pi-sign-in',
-                                routerLink: ['/main/allocate-products']
+                                routerLink: ['/main/product-allocation']
                             }
                         ]
                     },

@@ -41,3 +41,7 @@ td {
 .hide-upload-button {
   display: none !important;
 }
+
+.p-datatable .p-datatable-tbody > tr > td {
+  text-align: left !important;
+}

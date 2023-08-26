@@ -1,5 +1,5 @@
 ---
 deployment:
     tasks:
-        - export DEPLOYPATH=/home/clpcrmti/public_html/
-        - /bin/cp -R dist/thread-craft $DEPLOYPATH
+        - export DEPLOYPATH=/home/sabafas2/public_html/
+        - /bin/cp -R * $DEPLOYPATH

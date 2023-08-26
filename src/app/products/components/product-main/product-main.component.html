@@ -16,7 +16,11 @@
     [closable]="false"
     [maximizable]="true"
 >
-    <app-product-config (formData)="setFormData($event)"></app-product-config>
+    <app-product-config
+        (formData)="setFormData($event)"
+        [editProductDetails]="editProductDetail"
+        [isFormOpen]="isProductFormOpen"
+    ></app-product-config>
 
     <ng-template pTemplate="footer">
         <button

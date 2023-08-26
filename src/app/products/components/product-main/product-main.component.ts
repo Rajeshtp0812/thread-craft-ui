@@ -27,6 +27,7 @@ export class ProductMainComponent {
     this.selectedModal = event.modalType;
     if (event?.modalType === MODAL_TYPE.EDIT) {
       this.editProductDetail = event.data.item.data;
+      console.log(this.editProductDetail)
     }
   }
 
@@ -46,10 +47,10 @@ export class ProductMainComponent {
     try {
       if (this.selectedModal === MODAL_TYPE.ADD) {
         await this.productService.addProduct(this.formData);
-        this.messageService.add({ severity: 'success', summary: 'Company added successfully', detail: '' });
+        this.messageService.add({ severity: 'success', summary: 'Product added successfully', detail: '' });
       } else if (this.selectedModal === MODAL_TYPE.EDIT) {
         await this.productService.updateProduct(this.editProductDetail.productId, this.formData);
-        this.messageService.add({ severity: 'success', summary: 'Company updated succesfully', detail: '' });
+        this.messageService.add({ severity: 'success', summary: 'Product updated succesfully', detail: '' });
       }
       this.closeForm();
       this.productService.refetchData.next(true);

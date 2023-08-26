@@ -78,10 +78,10 @@
     </ng-template>
     <ng-template pTemplate="emptymessage">
         <tr>
-            <td colspan="cols?.length" *ngIf="!isDataLoading && data?.length">
+            <td colspan="8" *ngIf="!isDataLoading && data?.length">
                 No record found.
             </td>
-            <td colspan="cols?.length" *ngIf="!isDataLoading && !data?.length">
+            <td colspan="8" *ngIf="!isDataLoading && !data?.length">
                 No data to display.
             </td>
         </tr>

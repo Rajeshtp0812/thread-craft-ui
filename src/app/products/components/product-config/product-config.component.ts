@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { COMPANY } from '../../../common/constants';
+import { DatePipe } from '@angular/common';
+import { DateTime } from 'luxon';
 
 const EXPRESSION_EVAL_FIELDS = ['average'];
 
@@ -19,8 +20,21 @@ export class ProductConfigComponent {
   form: FormGroup;
   evaluatedResults: { [key: string]: any } = {}; // Object to hold evaluated results
   @Output() formData = new EventEmitter();
+  @Input() set editProductDetails(value) {
+    if (value) {
+      this.setFormData(value);
+    }
+  }
 
-  constructor() {
+  @Input() set isFormOpen(value: boolean) {
+    if (!value) {
+      this.form.reset();
+      this.uploadedFiles = [];
+      this.evaluatedResults = {};
+    }
+  }
+
+  constructor(private datePipe: DatePipe) {
     this.form = new FormGroup({
       date: new FormControl(''),
       details: new FormControl(''),
@@ -59,13 +73,16 @@ export class ProductConfigComponent {
   sendFormData() {
     const formData = new FormData();
     let products = this.form.getRawValue();
+    const date = DateTime.fromJSDate(new Date(products['date']));
+    const formattedDate = date.toFormat('dd/MM/yyyy');
+    products['date'] = formattedDate;
+
     Object.entries(products).forEach((product: any) => {
       formData.append(product[0], product[1]);
     });
     if (this.uploadedFiles) {
       formData.append('image', this.uploadedFiles[0]);
     }
-    formData.append('companyId', JSON.parse(localStorage.getItem(COMPANY)).companyId);
     this.formData.emit({ data: formData, status: this.form.status });
   }
 
@@ -88,5 +105,15 @@ export class ProductConfigComponent {
     } catch (error) {
       this.evaluatedResults[controlName] = 'Invalid expression';
     }
+  }
+
+  setFormData(value) {
+    let formCtrl = this.form.controls;
+    Object.keys(this.form.controls).forEach(key => {
+      if (key === 'date') {
+        formCtrl[key].setValue(DateTime.fromFormat(value[key], 'dd/MM/yyyy'));
+      }
+      formCtrl[key].setValue(value[key]);
+    });
   }
 }

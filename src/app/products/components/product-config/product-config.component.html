@@ -2,15 +2,15 @@
     <form [formGroup]="form">
         <div class="p-fluid p-formgrid grid">
             <div class="col-12 md:col-4">
-                <label htmlFor="contact">Date</label>
+                <label htmlFor="contact" class="required">Date</label>
                 <p-calendar
                     appendTo="body"
-                    dateFormat="dd.mm.yy"
+                    dateFormat="dd/mm/yy"
                     formControlName="date"
                 ></p-calendar>
             </div>
             <div class="col-12 md:col-4">
-                <label htmlFor="companyName">Details</label>
+                <label htmlFor="companyName" class="required">Details</label>
                 <input
                     pInputText
                     id="companyName"
@@ -19,7 +19,7 @@
                 />
             </div>
             <div class="col-12 md:col-4">
-                <label htmlFor="companyName">Rate</label>
+                <label htmlFor="companyName" class="required">Rate</label>
                 <input
                     pInputText
                     id="companyName"
@@ -28,7 +28,7 @@
                 />
             </div>
             <div class="col-12 md:col-4">
-                <label htmlFor="companyName">Code</label>
+                <label htmlFor="companyName" class="required">Code</label>
                 <input
                     pInputText
                     id="companyName"
@@ -37,7 +37,16 @@
                 />
             </div>
             <div class="col-12 md:col-4">
-                <label htmlFor="companyName">Run No</label>
+                <label htmlFor="size">Size</label>
+                <input
+                    pInputText
+                    id="size"
+                    type="text"
+                    formControlName="size"
+                />
+            </div>
+            <div class="col-12 md:col-4">
+                <label htmlFor="companyName" class="required">Run No</label>
                 <input
                     pInputText
                     id="companyName"
@@ -46,7 +55,7 @@
                 />
             </div>
             <div class="col-12 md:col-4">
-                <label htmlFor="companyName">Bill No</label>
+                <label htmlFor="companyName" class="required">Bill No</label>
                 <input
                     pInputText
                     id="companyName"

@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
     async login() {
         try {
             let response = await this.userService.login(this.username, this.password);
-            this.tokenStorage.saveToken(response.data.token);
+            this.tokenStorage.saveAccessToken(response.data.accessToken);
             localStorage.setItem(COMPANY, JSON.stringify(this.selectedCompany.value));
             this.router.navigate(['/main']);
         } catch (error) {

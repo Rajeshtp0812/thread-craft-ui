@@ -1,43 +1,30 @@
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
-import { MessageService } from 'primeng/api';
-import { ContextMenu } from 'primeng/contextmenu';
 import { Table } from 'primeng/table';
 import { MODAL_TYPE } from '../../../common/constants';
-import { ProductService } from '../../product.service';
+import { MessageService } from 'primeng/api';
+import { ContextMenu } from 'primeng/contextmenu';
+import { ProductService } from '../../../products/product.service';
 
 @Component({
-  selector: 'app-product-table',
-  templateUrl: './product-table.component.html',
-  styleUrls: ['./product-table.component.scss']
+  selector: 'app-product-allotment-table',
+  templateUrl: './product-allotment-table.component.html',
+  styleUrls: ['./product-allotment-table.component.scss']
 })
-export class ProductTableComponent {
+export class ProductAllotmentTableComponent {
   isDataLoading = false;
   cols = [
-    { field: 'details', header: 'Details' },
-    { field: 'code', header: 'Code' },
-    { field: 'image', header: 'Image' },
+    { field: 'companyName', header: 'Company' },
     { field: 'date', header: 'Date' },
     { field: 'size', header: 'Size' },
-    { field: 'runNo', header: 'Run No' },
-    { field: 'billNo', header: 'Bill No' },
-    { field: 'average', header: 'Average' },
-    { field: 'embroidary', header: 'Embroidary' },
-    { field: 'fittingStich', header: 'Fitting Stich' },
-    { field: 'buttonStich', header: 'Button Stich' },
-    { field: 'print', header: 'Print' },
-    { field: 'pintex', header: 'Pintex' },
-    { field: 'kMaking', header: 'K-Making' },
-    { field: 'tag', header: 'Tag' },
-    { field: 'label', header: 'Label' },
-    { field: 'making', header: 'Making' },
-    { field: 'canvas', header: 'Canvas' },
-    { field: 'totalAmount', header: 'Total Amount' }
-  ];
+    { field: 'quantity', header: 'Quantity' },
+    { field: 'rate', header: 'Rate' },
+    { field: 'totalAmount', header: 'Total Amount' },
+    { field: 'balanceAmount', header: 'Balance Amount' },
+    { field: 'advancePayment', header: 'Advance Payment' }];
   data = [];
   contextMenus: any[];
-  @Output() openProductForm = new EventEmitter();
+  @Output() openAllottmentForm = new EventEmitter();
   filterFields = [];
-  @ViewChild('dt') dt: Table;
 
   @ViewChild('cm') contextMenu: ContextMenu
 
@@ -53,7 +40,7 @@ export class ProductTableComponent {
   async fetchData() {
     this.isDataLoading = true;
     try {
-      let response: any = await this.productService.getProducts();
+      let response: any = await this.productService.getAllottedProducts();
       this.data = response.data;
     } catch (error) {
       this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
@@ -69,7 +56,7 @@ export class ProductTableComponent {
         {
           label: 'Add',
           data: data,
-          command: () => this.openProductForm.emit({ modalType: MODAL_TYPE.ADD, data: null })
+          command: () => this.openAllottmentForm.emit({ modalType: MODAL_TYPE.ADD, data: null })
         },
       ];
     } else if (type === 'rowMenu') {
@@ -77,13 +64,13 @@ export class ProductTableComponent {
         {
           label: 'Edit',
           data: data,
-          command: (data) => this.openProductForm.emit({ modalType: MODAL_TYPE.EDIT, data })
+          command: (data) => this.openAllottmentForm.emit({ modalType: MODAL_TYPE.EDIT, data })
 
         },
         {
           label: 'Delete',
           data: data,
-          command: (data) => this.deleteProduct(data)
+          command: (data) => this.deleteClient(data)
 
         },
       ];
@@ -91,9 +78,9 @@ export class ProductTableComponent {
     this.contextMenu.show(event);
   }
 
-  async deleteProduct(data) {
+  async deleteClient(data) {
     try {
-      await this.productService.deleteProduct(data.item.data.productId);
+      await this.productService.deleteAllotment(data.item.data.productAllotmentId);
       this.productService.refetchData.next(true);
     } catch (error) {
       this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
