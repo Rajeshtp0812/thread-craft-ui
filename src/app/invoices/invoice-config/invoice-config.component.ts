@@ -133,7 +133,6 @@ export class InvoiceConfigComponent {
   }
 
   modelChanged(event) {
-    console.log(event)
   }
 
   onRowEditInit(product: any) {

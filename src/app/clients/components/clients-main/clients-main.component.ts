@@ -24,7 +24,6 @@ export class ClientsMainComponent {
     this.isClientFormOpen = !this.isClientFormOpen;
     this.editClientDetail = null;
     this.selectedModal = event.modalType;
-    console.log(event)
     if (event?.modalType === MODAL_TYPE.EDIT) {
       this.editClientDetail = event.data.item.data;
     }

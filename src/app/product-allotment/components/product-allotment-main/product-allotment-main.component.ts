@@ -50,8 +50,6 @@ export class ProductAllotmentMainComponent implements OnInit {
     const advancePaymentControl = this.form.get('advancePayment');
 
     this.form.valueChanges.pipe(debounceTime(300)).subscribe((value) => {
-      console.log('on change', this.form.controls['vendor'])
-
       if (quantityControl.value && rateControl.value) {
         this.totalAmount = quantityControl.value * rateControl.value;
         this.form.get('totalAmount').setValue(this.totalAmount);

@@ -26,7 +26,7 @@ export class AuthInterceptor implements HttpInterceptor {
         const token = this.tokenStorageService.getAccessToken();
         if (token && !this.jwtHelper.isTokenExpired(token)) {
             authReq = req.clone({
-                url: this.addQueryParams(req.url, updatedParams),
+                ...(req.method === 'POST' || req.method === 'GET') && { url: this.addQueryParams(req.url, updatedParams) },
                 setHeaders: {
                     Authorization: `Bearer ${token}`
                 }

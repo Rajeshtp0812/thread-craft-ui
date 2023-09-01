@@ -75,7 +75,6 @@ export class InvoiceTableComponent {
   }
 
   deleteClient(data) {
-    console.log('delete')
   }
 
 

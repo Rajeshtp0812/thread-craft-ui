@@ -1,5 +1,5 @@
-const BASE_URL = 'http://localhost:8000/'
-// const BASE_URL = 'https://backend.services.sabafashion.in/'
+// const BASE_URL = 'http://localhost:8000/'
+const BASE_URL = 'https://backend.services.sabafashion.in/'
 
 export const environment = {
   production: false,

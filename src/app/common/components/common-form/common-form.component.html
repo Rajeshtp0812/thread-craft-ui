@@ -34,12 +34,12 @@
                     class="{{ formRequiredFields.contact }}"
                     >Contact</label
                 >
-                <p-inputNumber
-                    [useGrouping]="false"
+                <input
+                    pInputText
                     id="contact"
                     type="text"
                     formControlName="contact"
-                ></p-inputNumber>
+                />
                 <p class="error">
                     {{ form.controls["contact"]?.errors?.errorMsg }}
                 </p>

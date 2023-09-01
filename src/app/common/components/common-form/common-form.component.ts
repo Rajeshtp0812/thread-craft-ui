@@ -69,7 +69,6 @@ export class CommonFormComponent implements OnInit, OnChanges {
 
   onFormControlValueChanges() {
     this.form.valueChanges.subscribe(() => {
-      console.log(this.form.controls)
       this.emitFormData();
     })
   }

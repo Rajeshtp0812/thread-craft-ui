@@ -27,7 +27,6 @@ export class ProductMainComponent {
     this.selectedModal = event.modalType;
     if (event?.modalType === MODAL_TYPE.EDIT) {
       this.editProductDetail = event.data.item.data;
-      console.log(this.editProductDetail)
     }
   }
 

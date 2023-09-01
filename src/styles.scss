@@ -53,3 +53,7 @@ td {
 .p-dialog-content::-webkit-scrollbar {
   display: none;
 }
+
+.p-datatable-wrapper .p-datatable-tbody {
+  min-height: calc(100vh - 90px);
+}
