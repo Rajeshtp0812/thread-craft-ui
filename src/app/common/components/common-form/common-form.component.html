@@ -24,6 +24,9 @@
                     type="text"
                     formControlName="email"
                 />
+                <p class="error">
+                    {{ form.controls["email"]?.errors?.errorMsg }}
+                </p>
             </div>
             <div class="col-12 md:col-6">
                 <label
@@ -31,18 +34,24 @@
                     class="{{ formRequiredFields.contact }}"
                     >Contact</label
                 >
-                <input
-                    pInputText
+                <p-inputNumber
+                    [useGrouping]="false"
                     id="contact"
                     type="text"
                     formControlName="contact"
-                />
+                ></p-inputNumber>
+                <p class="error">
+                    {{ form.controls["contact"]?.errors?.errorMsg }}
+                </p>
             </div>
             <div class="col-12">
                 <label htmlFor="gst" class="{{ formRequiredFields.gst }}"
                     >GST</label
                 >
                 <input pInputText id="gst" type="text" formControlName="gst" />
+                <p class="error">
+                    {{ form.controls["gst"]?.errors?.errorMsg }}
+                </p>
             </div>
             <div class="col-12">
                 <label
@@ -50,12 +59,12 @@
                     class="{{ formRequiredFields.address }}"
                     >Address</label
                 >
-                <input
+                <textarea
                     pInputTextarea
                     id="address"
-                    rows="4"
+                    rows="2"
                     formControlName="address"
-                />
+                ></textarea>
             </div>
             <div class="col-12 md:col-6">
                 <label htmlFor="state" class="{{ formRequiredFields.state }}"
@@ -90,6 +99,9 @@
                     type="text"
                     formControlName="pinCode"
                 />
+                <p class="error">
+                    {{ form.controls["pinCode"]?.errors?.errorMsg }}
+                </p>
             </div>
         </div>
     </form>

@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { InputTextModule } from 'primeng/inputtext';
 import { TokenTimerComponent } from './components/token-timer/token-timer.component';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @NgModule({
     declarations: [
@@ -16,7 +17,8 @@ import { TokenTimerComponent } from './components/token-timer/token-timer.compon
         ReactiveFormsModule,
         DropdownModule,
         InputTextareaModule,
-        InputTextModule
+        InputTextModule,
+        InputNumberModule
     ],
     exports: [
         CommonFormComponent

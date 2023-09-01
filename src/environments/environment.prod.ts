@@ -1,4 +1,4 @@
-const BASE_URL = 'http://clpcrm.com/thread-craft/'
+const BASE_URL = 'https://backend.services.sabafashion.in/'
 
 export const environment = {
   production: true,

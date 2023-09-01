@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { MODAL_TYPE } from '../../../common/constants';
-import { ClientService } from '../../../clients/client.service';
 import { MessageService } from 'primeng/api';
 import { ProductService } from '../../../products/product.service';
 import { VendorService } from '../../../vendors/vendor.service';
@@ -22,8 +21,7 @@ export class ProductAllotmentMainComponent implements OnInit {
   form: FormGroup;
   isFormValid = false;
 
-  constructor(private readonly clientService: ClientService,
-    private messageService: MessageService,
+  constructor(private messageService: MessageService,
     private readonly productService: ProductService,
     private readonly vendorService: VendorService) {
     this.form = new FormGroup({
@@ -52,6 +50,8 @@ export class ProductAllotmentMainComponent implements OnInit {
     const advancePaymentControl = this.form.get('advancePayment');
 
     this.form.valueChanges.pipe(debounceTime(300)).subscribe((value) => {
+      console.log('on change', this.form.controls['vendor'])
+
       if (quantityControl.value && rateControl.value) {
         this.totalAmount = quantityControl.value * rateControl.value;
         this.form.get('totalAmount').setValue(this.totalAmount);
@@ -74,16 +74,19 @@ export class ProductAllotmentMainComponent implements OnInit {
     this.isAllotmentFormOpen = !this.isAllotmentFormOpen;
     this.editAllotmentDetail = null;
     this.selectedModal = event.modalType;
-    console.log(event)
     if (event?.modalType === MODAL_TYPE.EDIT) {
       this.editAllotmentDetail = event.data.item.data;
+      this.setupForm()
     }
   }
 
   async fetchVendors() {
     try {
       let reponse: any = await this.vendorService.getVendors();
-      this.vendorOptions = reponse?.data?.map(vendor => { return { label: vendor.companyName, value: vendor } });
+      this.vendorOptions = reponse?.data?.map(vendor => {
+        delete vendor['company'];
+        return { label: vendor.companyName, value: vendor }
+      });
       this.vendorOptions.unshift({ label: 'Select', value: '' });
     } catch (err) {
       this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
@@ -93,7 +96,10 @@ export class ProductAllotmentMainComponent implements OnInit {
   async fetchProducts() {
     try {
       let reponse: any = await this.productService.getProducts();
-      this.productOptions = reponse?.data?.map(product => { return { label: product.code, value: product } });
+      this.productOptions = reponse?.data?.map(product => {
+        delete product['company'];
+        return { label: product.code, value: product }
+      });
       this.productOptions.unshift({ label: 'Select', value: '' });
     } catch (err) {
       this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
@@ -111,15 +117,22 @@ export class ProductAllotmentMainComponent implements OnInit {
       payload['product'] = payload['product']?.productId;
       if (this.selectedModal === MODAL_TYPE.ADD) {
         await this.productService.allotProduct(payload);
-        this.messageService.add({ severity: 'success', summary: 'Company created successfully', detail: '' });
+        this.messageService.add({ severity: 'success', summary: 'Product allotted successfully', detail: '' });
       } else if (this.selectedModal === MODAL_TYPE.EDIT) {
         await this.productService.updateAllotedProduct(this.editAllotmentDetail.productAllotmentId, payload);
-        this.messageService.add({ severity: 'success', summary: 'Company updated succesfully', detail: '' });
+        this.messageService.add({ severity: 'success', summary: 'Allotment updated succesfully', detail: '' });
       }
       this.closeForm();
       this.productService.refetchData.next(true);
     } catch (error) {
       this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
     }
+  }
+
+  setupForm() {
+    let formCtrl = this.form.controls;
+    Object.keys(this.form.controls).forEach(key => {
+      formCtrl[key].setValue(this.editAllotmentDetail[key]);
+    });
   }
 }

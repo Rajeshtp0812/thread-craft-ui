@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { CountryStateCityService } from '../../service/country-state-city.service';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { CONTACT, EMAIL, GST, PIN_CODE, customPatternValidator } from '../../validators/customValidators';
 
 export enum WRAPPER_COMPONENT {
   COMPANY = 'company',
@@ -48,15 +49,15 @@ export class CommonFormComponent implements OnInit, OnChanges {
   constructor(private readonly stateCityService: CountryStateCityService) {
     this.form = new FormGroup({
       companyName: new FormControl(''),
-      email: new FormControl(''),
-      contact: new FormControl(''),
-      gst: new FormControl(''),
+      email: new FormControl('', [customPatternValidator(EMAIL, 'Email is invalid')]),
+      contact: new FormControl('', [customPatternValidator(CONTACT, 'Contact is invalid')]),
+      gst: new FormControl('', [customPatternValidator(GST, 'GST number is invalid')]),
       address: new FormControl('', [Validators.required]),
       state: new FormControl('', [Validators.required]),
       city: new FormControl('', [Validators.required]),
-      pinCode: new FormControl('', [Validators.required]),
+      pinCode: new FormControl('', [Validators.required, customPatternValidator(PIN_CODE, 'Pin code is invalid')]),
 
-    });
+    }, { updateOn: 'blur' });
     this.onFormControlValueChanges();
   }
 
@@ -68,6 +69,7 @@ export class CommonFormComponent implements OnInit, OnChanges {
 
   onFormControlValueChanges() {
     this.form.valueChanges.subscribe(() => {
+      console.log(this.form.controls)
       this.emitFormData();
     })
   }

@@ -26,6 +26,10 @@ td {
   color: red;
 }
 
+.error {
+  color: red;
+}
+
 .upper-case {
   text-transform: uppercase;
 }
@@ -44,4 +48,8 @@ td {
 
 .p-datatable .p-datatable-tbody > tr > td {
   text-align: left !important;
+}
+
+.p-dialog-content::-webkit-scrollbar {
+  display: none;
 }

@@ -55,22 +55,30 @@
             <th style="max-width: 5px" alignFrozen="right" pFrozenColumn></th>
         </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-client>
+    <ng-template pTemplate="body" let-allotment>
         <tr>
             <td
                 pResizableColumn
                 *ngFor="let col of cols"
-                pTooltip="{{ client[col.field] }}"
+                pTooltip="{{
+                    col.field === 'companyName'
+                        ? allotment?.vendor[col.field]
+                        : allotment[col.field]
+                }}"
                 class="p-text-nowrap p-text-truncate"
                 tooltipPosition="bottom"
             >
-                {{ client[col.field] }}
+                {{
+                    col.field === "companyName"
+                        ? allotment?.vendor[col.field]
+                        : allotment[col.field]
+                }}
             </td>
             <td style="width: 5px" alignFrozen="right" pFrozenColumn>
                 <div>
                     <i
                         class="pi pi-ellipsis-h action-menu"
-                        (click)="onContextMenu($event, 'rowMenu', client)"
+                        (click)="onContextMenu($event, 'rowMenu', allotment)"
                     ></i>
                 </div>
             </td>

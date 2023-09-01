@@ -13,11 +13,11 @@ import { ProductService } from '../../../products/product.service';
 export class ProductAllotmentTableComponent {
   isDataLoading = false;
   cols = [
-    { field: 'companyName', header: 'Company' },
-    { field: 'date', header: 'Date' },
+    { field: 'companyName', header: 'Vendor' },
+    { field: 'deliveryDate', header: 'Date' },
     { field: 'size', header: 'Size' },
     { field: 'quantity', header: 'Quantity' },
-    { field: 'rate', header: 'Rate' },
+    { field: 'vendorRate', header: 'Rate' },
     { field: 'totalAmount', header: 'Total Amount' },
     { field: 'balanceAmount', header: 'Balance Amount' },
     { field: 'advancePayment', header: 'Advance Payment' }];
@@ -86,7 +86,6 @@ export class ProductAllotmentTableComponent {
       this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
     }
   }
-
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');

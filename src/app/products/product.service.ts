@@ -20,7 +20,7 @@ export class ProductService {
   constructor(private http: HttpClient) { }
 
   getProduct(id: number): Promise<any> {
-    return lastValueFrom(this.http.get(`${PRODUCT_URL}${id}`, {}));
+    return lastValueFrom(this.http.get(`${PRODUCT_URL}${id}/`, {}));
   }
 
   getProducts(): Promise<any> {
@@ -36,7 +36,7 @@ export class ProductService {
   }
 
   deleteProduct(id: number) {
-    return lastValueFrom(this.http.delete(`${PRODUCT_URL}${id}`));
+    return lastValueFrom(this.http.delete(`${PRODUCT_URL}${id}/`));
   }
 
   getAllottedProducts(): Promise<any> {
