@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import { CountryStateCityService } from '../../common/service/country-state-city.service';
 import { ClientService } from '../../clients/client.service';
 import { MessageService } from 'primeng/api';
+import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ProductService } from '../../products/product.service';
 
 const requiredFields = []
 
@@ -23,7 +25,7 @@ interface Invoice {
   address?: string,
   state?: string,
   city?: string,
-  invoiceItems: InvoiceItems[]
+  invoiceItems: any[]
 }
 
 @Component({
@@ -35,15 +37,20 @@ export class InvoiceConfigComponent {
   readonly select = 'Select'
   statesOptions: string[] = [];
   citiesOptions: string[] = [];
+  products = [];
   selectedState = '';
   selectedCity = '';
   activeIndex = -1;
   clients = [];
   isFormValid = false;
-
+  itemsForm: FormGroup;
   invoices: Invoice = { invoiceItems: [] };
+  totalAmount = 0;
+  cgstPer = 0;
+  sgstPer = 0;
+  cgstAmount = 0;
+  sgstAmount = 0;
 
-  clonedProducts: { [s: string]: any } = {};
 
   @Input() set resetActiveIndex(value) {
     if (value) {
@@ -56,12 +63,19 @@ export class InvoiceConfigComponent {
 
   constructor(private readonly stateCityService: CountryStateCityService,
     private readonly clientService: ClientService,
-    private readonly messageService: MessageService) { }
+    private readonly messageService: MessageService,
+    private fb: FormBuilder,
+    private readonly productService: ProductService) {
+    this.itemsForm = this.fb.group({
+      invoiceItems: this.fb.array([this.newItems()]),
+    });
+  }
 
   ngOnInit(): void {
     this.statesOptions = this.stateCityService.getStatesByCountry('IN');
     this.statesOptions.unshift(this.select);
     this.fetchClient();
+    this.fetchProducts()
     this.invoices['invoiceItems'] = [{
       id: 1,
       code: '1254',
@@ -104,6 +118,20 @@ export class InvoiceConfigComponent {
 
   }
 
+  onValueChanges() {
+    this.itemsForm.valueChanges.subscribe()
+  }
+
+  async fetchProducts() {
+    try {
+      let res = await this.productService.getProducts();
+      this.products = res?.data?.map(product => ({ label: product.code, value: product }));
+      this.products.unshift({ label: 'Select', value: '' });
+    } catch (err) {
+      this.messageService.add({ severity: "error", summary: "Unexpected error occured" });
+    }
+  }
+
   async fetchClient() {
     try {
       let clients = await this.clientService.getClients();
@@ -123,28 +151,69 @@ export class InvoiceConfigComponent {
     }
   }
 
+  get items(): FormArray {
+    return this.itemsForm.get("invoiceItems") as FormArray
+  }
+
+  newItems(): FormGroup {
+    return this.fb.group({
+      code: new FormControl(''),
+      description: new FormControl(),
+      hsnCode: new FormControl(),
+      rate: new FormControl(),
+      quantity: new FormControl(),
+      amount: new FormControl(),
+    })
+  }
+
   addRow() {
-    let row: InvoiceItems = { code: null, description: null, hsnCode: null, rate: null, quantity: null, amount: null }
-    this.invoices.invoiceItems.push(row);
+    this.items.push(this.newItems());
   }
 
   deleteRow(index: number) {
-    this.invoices.invoiceItems.splice(index, 1);
+    console.log(index)
+    this.items.removeAt(index);
+    this.calculateTotalAmount();
   }
 
-  modelChanged(event) {
+  modelChanged(value, key) {
+    this.invoices[key] = value;
   }
 
-  onRowEditInit(product: any) {
-    this.clonedProducts[product.id as string] = { ...product };
+  onProductSelect(evt, index) {
+    let formCtrl = this.items?.controls[index];
+    if (evt.value) {
+      formCtrl['controls'].description.setValue(evt.value.details);
+      formCtrl['controls'].rate.setValue(evt.value.rate);
+    }
   }
 
-  onRowEditSave(product: any) {
+  calculateAmount(quantity, index) {
+    let formCtrl = this.items?.controls[index];
+    if (formCtrl['controls']?.rate?.value) {
+      try {
+        formCtrl['controls'].amount.setValue(Number(quantity) * Number(formCtrl['controls']?.rate?.value));
+        this.calculateTotalAmount();
+      } catch (err) {
 
+      }
+    }
   }
 
-  onRowEditCancel(product: any, index: number) {
-    this.invoices[index] = this.clonedProducts[product.id as string];
-    delete this.clonedProducts[product.id as string];
+  calculateTotalAmount() {
+    let formCtrls = this.items.controls;
+    let totalAmountWoGst = 0;
+    formCtrls?.forEach((formCtrl) => {
+      totalAmountWoGst += Number(formCtrl['controls']?.amount?.value);
+    });
+    if (this.cgstPer > 0) {
+      this.cgstAmount = (totalAmountWoGst * this.cgstPer) / 100;
+    }
+
+    if (this.sgstPer > 0) {
+      this.sgstAmount = (totalAmountWoGst * this.sgstPer) / 100;
+    }
+
+    this.totalAmount = totalAmountWoGst + this.cgstAmount + this.sgstAmount;
   }
 }

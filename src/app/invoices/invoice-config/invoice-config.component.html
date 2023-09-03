@@ -8,7 +8,7 @@
                     [filter]="true"
                     [(ngModel)]="invoices.client"
                     appendTo="body"
-                    (ngModelChange)="modelChanged($event)"
+                    (ngModelChange)="modelChanged($event, 'client')"
                 ></p-dropdown>
             </div>
             <div class="col-12 md:col-4">
@@ -18,7 +18,7 @@
                     id="contact"
                     type="text"
                     [(ngModel)]="invoices.invoiceNumber"
-                    (ngModelChange)="modelChanged($event)"
+                    (ngModelChange)="modelChanged($event, 'invoiceNumber')"
                 />
             </div>
             <div class="col-12 md:col-4">
@@ -27,7 +27,7 @@
                     appendTo="body"
                     dateFormat="dd.mm.yy"
                     [(ngModel)]="invoices.supplyDate"
-                    (ngModelChange)="modelChanged($event)"
+                    (ngModelChange)="modelChanged($event, 'supplyDate')"
                 ></p-calendar>
             </div>
         </div>
@@ -41,7 +41,7 @@
                     id="transportationType"
                     type="text"
                     [(ngModel)]="invoices.transportationType"
-                    (ngModelChange)="modelChanged($event)"
+                    (ngModelChange)="modelChanged($event, 'transportationType')"
                 />
             </div>
             <div class="col-12 md:col-4">
@@ -51,7 +51,7 @@
                     (onChange)="selectState($event)"
                     [filter]="true"
                     [(ngModel)]="invoices.state"
-                    (ngModelChange)="modelChanged($event)"
+                    (ngModelChange)="modelChanged($event, 'state')"
                     appendTo="body"
                 ></p-dropdown>
             </div>
@@ -62,7 +62,7 @@
                     [(ngModel)]="invoices.city"
                     [filter]="true"
                     [disabled]="!citiesOptions?.length"
-                    (ngModelChange)="modelChanged($event)"
+                    (ngModelChange)="modelChanged($event, 'city')"
                     appendTo="body"
                 ></p-dropdown>
             </div>
@@ -73,220 +73,129 @@
                     id="address"
                     rows="3"
                     [(ngModel)]="invoices.address"
-                    (ngModelChange)="modelChanged($event)"
+                    (ngModelChange)="modelChanged($event, 'address')"
                 ></textarea>
             </div>
         </div>
     </p-accordionTab>
-    <p-accordionTab header="Itemized List">
-        <p-table
-            [value]="invoices?.invoiceItems"
-            dataKey="id"
-            editMode="row"
-            [tableStyle]="{ 'min-width': '50rem' }"
-        >
-            <ng-template pTemplate="header">
-                <tr>
-                    <th style="width: 20%">Code</th>
-                    <th style="width: 20%">Description</th>
-                    <th style="width: 20%">HSN</th>
-                    <th style="width: 10%">Rate</th>
-                    <th style="width: 10%">Quantity</th>
-                    <th style="width: 10%">Amount</th>
-                    <th style="width: 10%"></th>
-                </tr>
-            </ng-template>
-            <ng-template
-                pTemplate="body"
-                let-item
-                let-editing="editing"
-                let-ri="rowIndex"
-            >
-                <tr [pEditableRow]="item">
-                    <td style="width: 20%">
-                        <p-cellEditor>
-                            <ng-template pTemplate="input">
-                                <input
-                                    pInputText
-                                    type="text"
-                                    [(ngModel)]="item.code"
-                                    (ngModelChange)="modelChanged($event)"
-                                />
-                            </ng-template>
-                            <ng-template pTemplate="output">
-                                {{ item.code }}
-                            </ng-template>
-                        </p-cellEditor>
-                    </td>
-                    <td style="width: 20%">
-                        <p-cellEditor>
-                            <ng-template pTemplate="input">
-                                <input
-                                    (ngModelChange)="modelChanged($event)"
-                                    pInputText
-                                    type="text"
-                                    [(ngModel)]="item.description"
-                                    required
-                                />
-                            </ng-template>
-                            <ng-template pTemplate="output">
-                                {{ item.description }}
-                            </ng-template>
-                        </p-cellEditor>
-                    </td>
-                    <td style="width: 20%">
-                        <p-cellEditor>
-                            <ng-template pTemplate="input">
-                                <input
-                                    (ngModelChange)="modelChanged($event)"
-                                    pInputText
-                                    type="text"
-                                    [(ngModel)]="item.hsnCode"
-                                    required
-                                />
-                            </ng-template>
-                            <ng-template pTemplate="output">
-                                {{ item.hsnCode }}
-                            </ng-template>
-                        </p-cellEditor>
-                    </td>
-                    <td style="width: 10%">
-                        <p-cellEditor>
-                            <ng-template pTemplate="input">
-                                <input
-                                    (ngModelChange)="modelChanged($event)"
-                                    pInputText
-                                    type="text"
-                                    [(ngModel)]="item.rate"
-                                    required
-                                />
-                            </ng-template>
-                            <ng-template pTemplate="output">
-                                {{ item.rate }}
-                            </ng-template>
-                        </p-cellEditor>
-                    </td>
-                    <td style="width: 10%">
-                        <p-cellEditor>
-                            <ng-template pTemplate="input">
-                                <input
-                                    (ngModelChange)="modelChanged($event)"
-                                    pInputText
-                                    type="text"
-                                    [(ngModel)]="item.quantity"
-                                    required
-                                />
-                            </ng-template>
-                            <ng-template pTemplate="output">
-                                {{ item.quantity }}
-                            </ng-template>
-                        </p-cellEditor>
-                    </td>
-                    <td style="width: 10%">
-                        <p-cellEditor>
-                            <ng-template pTemplate="input">
-                                <input
-                                    (ngModelChange)="modelChanged($event)"
-                                    pInputText
-                                    type="text"
-                                    [(ngModel)]="item.amount"
-                                />
-                            </ng-template>
-                            <ng-template pTemplate="output">
-                                {{ item.amount | currency : "INR" }}
-                            </ng-template>
-                        </p-cellEditor>
-                    </td>
-                    <td style="width: 10%">
-                        <div
-                            class="flex align-items-center justify-content-center gap-2"
-                        >
-                            <button
-                                *ngIf="!editing"
-                                pButton
-                                pRipple
-                                type="button"
-                                pInitEditableRow
-                                icon="pi pi-pencil"
-                                (click)="onRowEditInit(item)"
-                                class="p-button-rounded p-button-text"
-                            ></button>
-                            <button
-                                *ngIf="
-                                    !editing &&
-                                    invoices?.invoiceItems?.length > 1
-                                "
-                                pButton
-                                pRipple
-                                type="button"
-                                icon="pi pi-trash"
-                                (click)="deleteRow(ri)"
-                                class="p-button-rounded p-button-text"
-                            ></button>
-                            <button
-                                *ngIf="editing"
-                                pButton
-                                pRipple
-                                type="button"
-                                pSaveEditableRow
-                                icon="pi pi-check"
-                                (click)="onRowEditSave(item)"
-                                class="p-button-rounded p-button-text p-button-success mr-2"
-                            ></button>
-                            <button
-                                *ngIf="editing"
-                                pButton
-                                pRipple
-                                type="button"
-                                pCancelEditableRow
-                                icon="pi pi-times"
-                                (click)="onRowEditCancel(item, ri)"
-                                class="p-button-rounded p-button-text p-button-danger"
-                            ></button>
-                        </div>
-                    </td>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="footer">
-                <tr height="">
-                    <td colspan="4">
-                        <p-button
-                            icon="pi pi-plus"
-                            styleClass="p-button-rounded p-button-secondary"
-                            (click)="addRow()"
-                        ></p-button>
-                    </td>
-                    <td><span>SGST</span></td>
-                    <td colspan="2">
-                        <ng-container>
-                            <p-inputNumber
-                                mode="decimal"
-                                suffix="%"
-                                [showButtons]="true"
-                                [min]="0"
-                                [maxFractionDigits]="2"
-                            >
-                            </p-inputNumber>
-                        </ng-container>
-                    </td>
-                </tr>
-                <tr height="">
-                    <td colspan="4"></td>
-                    <td><span>CGST</span></td>
-                    <td colspan="2">
-                        <ng-container>
-                            <p-inputNumber
-                                mode="decimal"
-                                suffix="%"
-                                [showButtons]="true"
-                                [min]="0"
-                                [maxFractionDigits]="2"
-                            >
-                            </p-inputNumber>
-                        </ng-container>
-                    </td>
-                </tr>
-            </ng-template>
-        </p-table>
+    <p-accordionTab header="Itemized List" [formGroup]="itemsForm">
+        <div class="p-fluid p-formgrid grid">
+            <div class="col-2">Code</div>
+            <div class="col-2">Description</div>
+            <div class="col-2">Rate</div>
+            <div class="col-1">Quantity</div>
+            <div class="col-2">HSN</div>
+            <div class="col-2">Amount</div>
+            <div class="col-1">
+                <p-button
+                    icon="pi pi-plus"
+                    styleClass="p-button-rounded p-button-secondary"
+                    (click)="addRow()"
+                ></p-button>
+            </div>
+        </div>
+        <div class="p-fluid p-formgrid grid" formArrayName="invoiceItems">
+            <ng-container *ngFor="let skill of items.controls; let i = index">
+                <ng-container [formGroupName]="i">
+                    <div class="col-2">
+                        <p-dropdown
+                            [options]="products"
+                            formControlName="code"
+                            [filter]="true"
+                            (onChange)="onProductSelect($event, i)"
+                            appendTo="body"
+                            [ngModelOptions]="{ standalone: true }"
+                        ></p-dropdown>
+                    </div>
+                    <div class="col-2">
+                        <input
+                            pInputText
+                            type="text"
+                            formControlName="description"
+                        />
+                    </div>
+                    <div class="col-2">
+                        <input pInputText type="text" formControlName="rate" />
+                    </div>
+                    <div class="col-1">
+                        <input
+                            pInputText
+                            type="text"
+                            formControlName="quantity"
+                            (input)="calculateAmount($event.target.value, i)"
+                        />
+                    </div>
+                    <div class="col-2">
+                        <input
+                            pInputText
+                            type="text"
+                            formControlName="hsnCode"
+                        />
+                    </div>
+                    <div class="col-2">
+                        <input
+                            pInputText
+                            type="text"
+                            formControlName="amount"
+                        />
+                    </div>
+                    <div class="col-1">
+                        <button
+                            *ngIf="items.controls.length > 1"
+                            pButton
+                            pRipple
+                            type="button"
+                            icon="pi pi-trash"
+                            (click)="deleteRow(i)"
+                            class="p-button-rounded p-button-text"
+                        ></button>
+                    </div>
+                </ng-container>
+            </ng-container>
+        </div>
+
+        <div class="p-fluid p-formgrid grid">
+            <div class="col"></div>
+            <div class="col-1">CGST</div>
+            <div class="col-2">
+                <p-inputNumber
+                    mode="decimal"
+                    suffix="%"
+                    [showButtons]="true"
+                    [min]="0"
+                    [maxFractionDigits]="2"
+                    [(ngModel)]="cgstPer"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="calculateTotalAmount()"
+                >
+                </p-inputNumber>
+            </div>
+            <div class="col-2">{{ cgstAmount }}</div>
+            <div class="col-1"></div>
+        </div>
+        <div class="p-fluid p-formgrid grid">
+            <div class="col"></div>
+            <div class="col-1">SGST</div>
+            <div class="col-2">
+                <p-inputNumber
+                    mode="decimal"
+                    suffix="%"
+                    [showButtons]="true"
+                    [min]="0"
+                    [maxFractionDigits]="2"
+                    [(ngModel)]="sgstPer"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="calculateTotalAmount()"
+                >
+                </p-inputNumber>
+            </div>
+            <div class="col-2">{{ sgstAmount }}</div>
+            <div class="col-1"></div>
+        </div>
+        <div class="p-fluid p-formgrid grid">
+            <div class="col"></div>
+            <div class="col-2">{{ totalAmount }}</div>
+            <div class="col-1"></div>
+        </div>
     </p-accordionTab>
 </p-accordion>

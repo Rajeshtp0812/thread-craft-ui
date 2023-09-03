@@ -26,7 +26,7 @@ export class ProductMainComponent {
     this.editProductDetail = null;
     this.selectedModal = event.modalType;
     if (event?.modalType === MODAL_TYPE.EDIT) {
-      this.editProductDetail = event.data.item.data;
+      this.editProductDetail = structuredClone(event.data.item.data);
     }
   }
 
@@ -48,6 +48,9 @@ export class ProductMainComponent {
         await this.productService.addProduct(this.formData);
         this.messageService.add({ severity: 'success', summary: 'Product added successfully', detail: '' });
       } else if (this.selectedModal === MODAL_TYPE.EDIT) {
+        for (var pair of this.formData.entries()) {
+          console.log(pair[0] + ', ' + pair[1]);
+        }
         await this.productService.updateProduct(this.editProductDetail.productId, this.formData);
         this.messageService.add({ severity: 'success', summary: 'Product updated succesfully', detail: '' });
       }

@@ -26,7 +26,7 @@ export class CompaniesMainComponent {
     this.editCompanyDetail = null;
     this.selectedModal = event.modalType;
     if (event?.modalType === MODAL_TYPE.EDIT) {
-      this.editCompanyDetail = event.data.item.data;
+      this.editCompanyDetail = structuredClone(event.data.item.data);
     }
   }
 

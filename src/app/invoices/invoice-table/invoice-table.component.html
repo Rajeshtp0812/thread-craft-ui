@@ -14,9 +14,10 @@
     [loading]="isDataLoading"
     [scrollable]="true"
     scrollDirection="horizontal"
-    scrollHeight="250px"
+    scrollHeight="380px"
     [virtualScroll]="true"
     [virtualScrollItemSize]="40"
+    [style.height]="calculateTableHeight()"
 >
     <ng-template pTemplate="caption">
         <div

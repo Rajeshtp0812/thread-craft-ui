@@ -23,7 +23,7 @@ export class VendorMainComponent {
     this.editVendorDetail = null;
     this.selectedModal = event.modalType;
     if (event?.modalType === MODAL_TYPE.EDIT) {
-      this.editVendorDetail = event.data.item.data;
+      this.editVendorDetail = structuredClone(event.data.item.data);
     }
   }
 

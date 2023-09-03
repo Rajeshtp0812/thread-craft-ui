@@ -17,11 +17,13 @@ interface UploadEvent {
 })
 export class ProductConfigComponent {
   uploadedFiles: any[] = [];
+  editPreviewImg = null;
   form: FormGroup;
   evaluatedResults: { [key: string]: any } = {}; // Object to hold evaluated results
   @Output() formData = new EventEmitter();
   @Input() set editProductDetails(value) {
     if (value) {
+      this.editPreviewImg = structuredClone(value?.image);
       this.setFormData(value);
     }
   }
@@ -80,8 +82,10 @@ export class ProductConfigComponent {
     Object.entries(products).forEach((product: any) => {
       formData.append(product[0], product[1]);
     });
-    if (this.uploadedFiles) {
+    if (this.uploadedFiles.length) {
       formData.append('image', this.uploadedFiles[0]);
+    } else if (!this.uploadedFiles.length && this.editPreviewImg) {
+      formData.append('image', '');
     }
     this.formData.emit({ data: formData, status: this.form.status });
   }
@@ -89,8 +93,14 @@ export class ProductConfigComponent {
   onUpload(event: UploadEvent) {
     for (let file of event.files) {
       this.uploadedFiles.push(file);
+      this.editPreviewImg = '';
       this.sendFormData()
     }
+  }
+
+  removeImage() {
+    this.editPreviewImg = '';
+    this.sendFormData(); // Update the form data
   }
 
   evaluateExpression(controlName: string) {

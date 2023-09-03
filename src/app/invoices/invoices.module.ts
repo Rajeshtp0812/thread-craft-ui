@@ -11,7 +11,7 @@ import { AccordionModule } from 'primeng/accordion';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { CalendarModule } from 'primeng/calendar';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { TableModule } from 'primeng/table';
 import { ContextMenuModule } from 'primeng/contextmenu';
@@ -38,7 +38,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
     InputTextareaModule,
     TableModule,
     ContextMenuModule,
-    InputNumberModule
+    InputNumberModule,
+    ReactiveFormsModule
   ]
 })
 export class InvoicesModule { }

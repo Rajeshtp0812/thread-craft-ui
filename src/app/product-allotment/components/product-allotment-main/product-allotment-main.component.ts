@@ -73,7 +73,7 @@ export class ProductAllotmentMainComponent implements OnInit {
     this.editAllotmentDetail = null;
     this.selectedModal = event.modalType;
     if (event?.modalType === MODAL_TYPE.EDIT) {
-      this.editAllotmentDetail = event.data.item.data;
+      this.editAllotmentDetail = structuredClone(event.data.item.data);
       this.setupForm()
     }
   }

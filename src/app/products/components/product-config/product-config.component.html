@@ -166,13 +166,33 @@
         </div>
         <p-fileUpload
             chooseLabel="Choose"
-            name="demo[]"
+            name="image[]"
             accept="image/*"
             maxFileSize="1000000"
             (onSelect)="onUpload($event)"
             uploadStyleClass="hide-upload-button"
             previewWidth="70"
         >
+            <ng-template pTemplate="content">
+                <div class="p-fileupload-files">
+                    <ng-container
+                        *ngIf="editPreviewImg"
+                        class="p-fileupload-row"
+                    >
+                        <img
+                            [src]="editPreviewImg"
+                            alt="Product Image"
+                            width="70"
+                            height="70"
+                        />
+                        <p-button
+                            icon="pi pi-times"
+                            styleClass="p-button-rounded p-button-primary p-button-text"
+                            (click)="removeImage()"
+                        ></p-button>
+                    </ng-container>
+                </div>
+            </ng-template>
         </p-fileUpload>
     </form>
 </div>

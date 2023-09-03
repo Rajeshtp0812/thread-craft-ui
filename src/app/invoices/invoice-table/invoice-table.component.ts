@@ -18,14 +18,7 @@ export class InvoiceTableComponent {
     { field: 'quantity', header: 'City' },
     { field: 'rate', header: 'Pin Code' },
     { field: 'amount', header: 'Address' }];
-  data = [{
-    "code": "1000",
-    "description": "f230fh0g3",
-    "hsnCode": "Product Description",
-    "quantity": "bamboo-watch.jpg",
-    "rate": 65,
-    "amount": "Accessories",
-  }];
+  data = [];
   contextMenus: any[];
   @Output() openCompaniesForm = new EventEmitter();
   filterFields = [];
@@ -260,6 +253,13 @@ export class InvoiceTableComponent {
         }
       }
     };
+  }
+
+  calculateTableHeight(): string {
+    const viewportHeight = window.innerHeight; // Get the viewport height
+    const percentage = 80; // Adjust this value as needed
+    const calculatedHeight = `calc(${viewportHeight}px * ${percentage / 100})`;
+    return calculatedHeight;
   }
 
 }

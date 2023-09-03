@@ -25,7 +25,7 @@ export class ClientsMainComponent {
     this.editClientDetail = null;
     this.selectedModal = event.modalType;
     if (event?.modalType === MODAL_TYPE.EDIT) {
-      this.editClientDetail = event.data.item.data;
+      this.editClientDetail = structuredClone(event.data.item.data);
     }
   }
 
