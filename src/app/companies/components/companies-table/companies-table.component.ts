@@ -34,6 +34,7 @@ export class CompaniesTableComponent {
 
   ngOnInit() {
     this.filterFields = this.cols.map(col => col.field);
+    console.log('filter fields', this.filterFields)
     this.fetchData();
     this.companyService.refetchData.subscribe(value => this.fetchData());
   }

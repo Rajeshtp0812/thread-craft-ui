@@ -17,9 +17,7 @@
     [closable]="false"
     [maximizable]="true"
 >
-    <app-invoice-config
-        [resetActiveIndex]="isInvoiceDialogOpen"
-    ></app-invoice-config>
+    <app-invoice-config (sendFormData)="formData($event)"></app-invoice-config>
 
     <ng-template pTemplate="footer">
         <button
@@ -36,6 +34,7 @@
             type="button"
             label="{{ selectedModal === 'edit' ? 'Save' : 'Create' }}"
             class="p-button-raised"
+            [disabled]="!isValid"
         ></button>
     </ng-template>
 </p-dialog>

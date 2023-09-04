@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CountryStateCityService } from '../../common/service/country-state-city.service';
 import { ClientService } from '../../clients/client.service';
 import { MessageService } from 'primeng/api';
@@ -51,15 +51,7 @@ export class InvoiceConfigComponent {
   cgstAmount = 0;
   sgstAmount = 0;
 
-
-  @Input() set resetActiveIndex(value) {
-    if (value) {
-      this.activeIndex = 0;
-    } else {
-      this.activeIndex = -1;
-    }
-  }
-
+  @Output() sendFormData = new EventEmitter();
 
   constructor(private readonly stateCityService: CountryStateCityService,
     private readonly clientService: ClientService,
@@ -76,42 +68,6 @@ export class InvoiceConfigComponent {
     this.statesOptions.unshift(this.select);
     this.fetchClient();
     this.fetchProducts()
-    this.invoices['invoiceItems'] = [{
-      id: 1,
-      code: '1254',
-      description: 'test1',
-      hsnCode: '548',
-      rate: 125,
-      quantity: 12,
-      amount: 120
-    },
-    {
-      id: 2,
-      code: '1254',
-      description: 'test2',
-      hsnCode: '548',
-      rate: 125,
-      quantity: 12,
-      amount: 120
-    },
-    {
-      id: 3,
-      code: '1254',
-      description: 'test3',
-      hsnCode: '548',
-      rate: 125,
-      quantity: 12,
-      amount: 120
-    },
-    {
-      id: 4,
-      code: '1254',
-      description: 'test4',
-      hsnCode: '548',
-      rate: 125,
-      quantity: 12,
-      amount: 120
-    }]
   }
 
   ngOnChanges() {
@@ -215,5 +171,10 @@ export class InvoiceConfigComponent {
     }
 
     this.totalAmount = totalAmountWoGst + this.cgstAmount + this.sgstAmount;
+  }
+
+  formData() {
+    this.invoices['invoiceItems'] = this.itemsForm.getRawValue();
+    this.sendFormData.emit({ data: this.invoices, status: this.itemsForm.status === 'VALID' });
   }
 }

@@ -10,10 +10,9 @@ export class InvoiceMainComponent {
   isInvoiceDialogOpen = false;
   editProductDetails: any = null;
   selectedModal: MODAL_TYPE;
-  items = [
-    { label: "Details" },
-    { label: "Preview" }
-  ];
+  isValid = false;
+  data = null;
+
 
   openCompaniesForm(event) {
     this.isInvoiceDialogOpen = !this.isInvoiceDialogOpen;
@@ -22,6 +21,11 @@ export class InvoiceMainComponent {
     if (event?.modalType === MODAL_TYPE.EDIT) {
       this.editProductDetails = event.data;
     }
+  }
+
+  formData(data) {
+    this.isValid = data.status;
+    data = data.data
   }
 
   cancel() {
