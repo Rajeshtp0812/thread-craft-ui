@@ -13,7 +13,6 @@ export class InvoiceMainComponent {
   isValid = false;
   data = null;
 
-
   openCompaniesForm(event) {
     this.isInvoiceDialogOpen = !this.isInvoiceDialogOpen;
     this.editProductDetails = null;

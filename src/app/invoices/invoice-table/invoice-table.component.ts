@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Table } from 'primeng/table';
-import { MODAL_TYPE } from '../../common/constants';
+import { COMPANY, MODAL_TYPE } from '../../common/constants';
 import { ContextMenu } from 'primeng/contextmenu';
 import { PrintService } from '../services/print.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-invoice-table',
@@ -12,13 +13,35 @@ import { PrintService } from '../services/print.service';
 export class InvoiceTableComponent {
   isDataLoading = false;
   cols = [
-    { field: 'code', header: 'Company Name' },
-    { field: 'description', header: 'Email' },
-    { field: 'hsnCode', header: 'State' },
-    { field: 'quantity', header: 'City' },
-    { field: 'rate', header: 'Pin Code' },
-    { field: 'amount', header: 'Address' }];
-  data = [];
+    { field: 'client', header: 'Company' },
+    { field: 'invoiceNumber', header: 'Invoice Number' },
+    { field: 'supplyDate', header: 'HSN Code' },
+    { field: 'state', header: 'State' },
+    { field: 'city', header: 'City' },
+    { field: 'address', header: 'Address' }];
+
+  data = [{
+    client: "Test Client",
+    invoiceNumber: '95521165565',
+    supplyDate: '20/12/2023',
+    state: 'Maharashtra',
+    city: 'Mumbai',
+    address: 'Wadala',
+    cgstPer: 0,
+    sgstPer: 0,
+    gst: '12545fjkh55484',
+    contact: '9632587410',
+    transport: 'car',
+    supplyPlace: 'Mumbai',
+    invoiceItems: [{
+      code: 56489,
+      description: 'testingn jhsdcjh',
+      hsnCode: 965874,
+      quantity: 45,
+      rate: 656,
+      amount: 87549,
+    }]
+  }];
   contextMenus: any[];
   @Output() openCompaniesForm = new EventEmitter();
   filterFields = [];
@@ -27,7 +50,10 @@ export class InvoiceTableComponent {
   @ViewChild('cm') contextMenu: ContextMenu
 
 
-  constructor(private readonly printService: PrintService) { }
+  constructor(private readonly printService: PrintService,
+    private readonly messageService: MessageService) {
+    this.messageService.add({ severity: 'info', summary: 'Work in progress', detail: '' })
+  }
 
   ngOnInit(): void {
   }
@@ -76,190 +102,188 @@ export class InvoiceTableComponent {
   }
 
   printInvoice(selectedInvoice: any) {
-    this.printInvoiceDetails = Object.entries(selectedInvoice).reduce((a: any, [k, v]) => (v == null ? a : (a[k] = v, a)), {});
+    this.printInvoiceDetails = Object.entries(selectedInvoice.item.data).reduce((a: any, [k, v]) => (v == null ? a : (a[k] = v, a)), {});
     this.printService.generatePDF(this.getPrintConfiguration());
   }
 
   getPrintConfiguration() {
-    let hsn_code_set: any = [];
-    let subData: any = [];
+    try {
+      let hsnCodes: any = [];
+      let subData: any = [];
+      let currentCompany = JSON.parse(localStorage.getItem(COMPANY));
 
-    this.printInvoiceDetails?.invoice_details?.forEach((inv: any, index: number) => {
-      if (!hsn_code_set.includes(inv.hsn_code)) {
-        hsn_code_set.push(inv.hsn_code);
-      }
-    });
-    // hsn_code_set?.forEach((hsn_code: any) => {
-    //   let tempInvoiceDetails: any = { hsn_code: hsn_code, quantity: 0, gst: 0, taxable_amount: 0, cgst: 0, sgst: 0 };
-    //   tempInvoiceDetails.gst = Number(this.printInvoiceDetails.gst_per) + Number(this.printInvoiceDetails.sgst_per);
-    //   this.printInvoiceDetails?.invoice_details?.forEach((inv: any) => {
-    //     if (inv.hsn_code === hsn_code) {
-    //       tempInvoiceDetails.quantity += inv.quantity;
-    //       tempInvoiceDetails.taxable_amount += Number(inv.amount);
-    //       tempInvoiceDetails.cgst = (tempInvoiceDetails.taxable_amount * Number(this.printInvoiceDetails.gst_per)) / 100;
-    //       tempInvoiceDetails.sgst = (tempInvoiceDetails.taxable_amount * Number(this.printInvoiceDetails.sgst_per)) / 100;
-    //     }
-    //   });
-    //   subData.push(tempInvoiceDetails);
-    // });
-    let columns = [{ colName: 'code', Field: 'Design No' }, { colName: 'description', Field: 'Description' }, { colName: 'hsn_code', Field: 'HSN Code' },
-    { colName: 'quantity', Field: 'Quantity' }, { colName: 'rate', Field: 'Rate' }, { colName: 'amount', Field: 'Amount' }]
-    return {
-      content: [
-        {
-          text: 'TAX INVOICE',
-          fontSize: 13,
-          bold: true,
-          alignment: 'center',
-          color: '#000'
-        },
-        {
-          text: 'SABA Fashion',
-          fontSize: 16,
-          alignment: 'center',
-          color: '#ff0000',
-          italics: true
-        },
-        {
-          text: 'Manufacturer of Readymade Garments',
-          fontSize: 11,
-          bold: true,
-          alignment: 'center',
-          color: '#000'
-        },
-        {
-          text: 'Add: Room No. 3. FSM 10/3/CEN-95 SK 144, Babu seth Chawl, Sewri Koliwada (E), Mumbai - 400 015',
-          fontSize: 9,
-          alignment: 'center',
-          color: '#000'
-        },
-        {
-          text: 'Mobile: 9819522313 Email: azhar0786.es@gmail.com',
-          fontSize: 9,
-          bold: true,
-          alignment: 'center',
-          color: '#000',
-        },
-        {
-          // columns: [
-          //   [
-          //     { text: `GSTIN: 27AMZPS7428M1ZS`, margin: [0, 15, 0, 2], decoration: 'underline', bold: true },
-          //     {
-          //       text: this.printInvoiceDetails.user.company_name,
-          //       bold: true
-          //     },
-          //     { text: `${this.printInvoiceDetails.user.address}`, margin: [0, 0, 5, 0] },
-          //     { text: `State: ${this.printInvoiceDetails.user.state}` },
-          //     { text: `Tel No: ${this.printInvoiceDetails.user.phone_number}` },
-          //     { text: `GST No: ${this.printInvoiceDetails.user.gst.toUpperCase()}` }
-          //   ],
-          //   [
-          //     {
-          //       text: `Tax is Payable On Reverse Change: `,
-          //       alignment: 'left',
-          //       margin: [0, 15, 0, 2],
-          //       decoration: 'underline',
-          //       bold: true
-          //     },
-          //     {
-          //       text: `Invoice No : ${this.printInvoiceDetails.invoice_no}`,
-          //       alignment: 'left'
-          //     },
-          //     {
-          //       text: `Transport: ${this.printInvoiceDetails.transport}`,
-          //       alignment: 'left'
-          //     },
-          //     {
-          //       text: `Date & Time of Supply: ${this.printInvoiceDetails.supply_date}`,
-          //       alignment: 'left'
-          //     },
-          //     {
-          //       text: `Place of Supply: ${this.printInvoiceDetails.supply_place}`,
-          //       alignment: 'left'
-          //     },
-          //   ],
-          // ]
-        },
-        {
-          margin: [0, 15, 0, 2],
-          table: {
-            headerRows: 1,
-            widths: ['auto', 'auto', '*', 'auto', 'auto', 'auto', 'auto'],
-            // body: [
-            //   ['Sr No', 'Design No', 'Description', 'HSN_Code', 'Quantity', 'Rate', 'Amount'],
-            //   ...this.printInvoiceDetails?.invoice_details?.map((inv: any, index: number) =>
-            //     ([index + 1, inv.code, inv.description, inv.hsn_code, inv.quantity, inv.rate, inv.amount])),
-            //   [{ text: `Rupees in words: ${this.printInvoiceDetails.amount_in_words}`, colSpan: 3, rowSpan: 2 }, {}, {}, { text: `CGST ${this.printInvoiceDetails.gst_per}`, bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails.cgst, colSpan: 2, alignment: 'center' }, {}],
-            //   [{}, {}, {}, { text: `SGST ${this.printInvoiceDetails.sgst_per}`, bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails.cgst, colSpan: 2, alignment: 'center' }, {}],
-            //   [{}, {}, {}, { text: 'Total Amount', bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails.total_amount, bold: true, colSpan: 2, alignment: 'center' }, {}],
-            // ]
-          }
-        },
-        {
-          margin: [0, 15, 0, 2],
-          // table: {
-          //   headerRows: 1,
-          //   widths: ["*", 'auto', 'auto', 'auto', 'auto', 'auto'],
-          //   body: [
-          //     ['HSN Code', 'Pcs', 'GST', 'Taxable Value', 'CGST', 'SGST'],
-          //     ...subData?.map((inv: any) =>
-          //       ([inv.hsn_code, inv.quantity, inv.gst, inv.taxable_amount, inv.cgst, inv.sgst])),
-          //   ]
-          // }
-        },
-        {
-          text: 'Terms and Conditions',
-          style: 'sectionHeader',
-          italics: true
-        },
-        {
-          columns: [
-            [{
-              italics: true,
-              ol: [
-                'Payment within 45 Days SUBJECT TO MUMBAI JURISDICTION.',
-                'In case of unpaid bill interest @24% will be charged extra from the date of bill.',
-                'Payment of this bill will be accepted only by payee A/c or draft.',
-                'Goods once sold not be taken back.',
-                'Once the goods are delivered We are not responsible for any claim.',
-              ],
-            }],
-          ]
-        },
-        {
-          columns: [
-            [{
-              margin: [0, 15, 0, 2],
-              text: 'Certified the particular given above are true correct & the amount indicated represent th price actually charged and their is no flow of additional consideration directly & indirectly from the buyers.'
-            }],
-            [
-              {
-                margin: [0, 15, 0, 2],
-                text: 'FOR SABA FASHION', alignment: 'right'
-              },
-              {
-                text: ' Auth. Signatory', alignment: 'right', margin: [0, 40, 0, 2]
-              }
-            ],
-          ]
-        },
-      ],
-      styles: {
-        sectionHeader: {
-          bold: true,
-          decoration: 'underline',
-          fontSize: 14,
-          margin: [0, 10, 0, 10]
+      this.printInvoiceDetails?.invoiceItems?.forEach((inv: any, index: number) => {
+        if (!hsnCodes.includes(inv.hsnCode)) {
+          hsnCodes.push(inv.hsnCode);
         }
-      }
-    };
-  }
+      });
+      hsnCodes?.forEach((hsnCode: any) => {
+        let tempInvoiceDetails: any = { hsnCode: hsnCode, quantity: 0, gst: 0, taxableAmount: 0, cgst: 0, sgst: 0 };
+        tempInvoiceDetails.gst = Number(this.printInvoiceDetails.cgstPer) + Number(this.printInvoiceDetails.sgstPer);
+        this.printInvoiceDetails?.invoiceItems?.forEach((inv: any) => {
+          if (inv.hsnCode === hsnCode) {
+            tempInvoiceDetails.quantity += inv.quantity;
+            tempInvoiceDetails.taxableAmount += Number(inv.amount);
+            tempInvoiceDetails.cgst = (tempInvoiceDetails.taxableAmount * Number(this.printInvoiceDetails.cgstPer)) / 100;
+            tempInvoiceDetails.sgst = (tempInvoiceDetails.taxableAmount * Number(this.printInvoiceDetails.sgstPer)) / 100;
+          }
+        });
+        subData.push(tempInvoiceDetails);
+      });
+      return {
+        content: [
+          {
+            text: 'TAX INVOICE',
+            fontSize: 13,
+            bold: true,
+            alignment: 'center',
+            color: '#000'
+          },
+          {
+            text: `${currentCompany?.companyName}`,
+            fontSize: 16,
+            alignment: 'center',
+            color: '#ff0000',
+            italics: true
+          },
+          {
+            text: 'Manufacturer of Readymade Garments',
+            fontSize: 11,
+            bold: true,
+            alignment: 'center',
+            color: '#000'
+          },
+          {
+            text: 'Add: Room No. 3. FSM 10/3/CEN-95 SK 144, Babu seth Chawl, Sewri Koliwada (E), Mumbai - 400 015',
+            fontSize: 9,
+            alignment: 'center',
+            color: '#000'
+          },
+          {
+            text: `Mobile: ${currentCompany.contact} Email: ${currentCompany.email}`,
+            fontSize: 9,
+            bold: true,
+            alignment: 'center',
+            color: '#000',
+          },
+          {
+            columns: [
+              [
+                { text: `GSTIN: ${currentCompany.gst}`, margin: [0, 15, 0, 2], decoration: 'underline', bold: true },
+                {
+                  text: this.printInvoiceDetails.client,
+                  bold: true
+                },
+                { text: `${this.printInvoiceDetails.address}`, margin: [0, 0, 5, 0] },
+                { text: `State: ${this.printInvoiceDetails.state}` },
+                { text: `Tel No: ${this.printInvoiceDetails.contact}` },
+                { text: `GST No: ${this.printInvoiceDetails.gst}` }
+              ],
+              [
+                {
+                  text: `Tax is Payable On Reverse Change: `,
+                  alignment: 'left',
+                  margin: [0, 15, 0, 2],
+                  decoration: 'underline',
+                  bold: true
+                },
+                {
+                  text: `Invoice No : ${this.printInvoiceDetails.invoiceNumber}`,
+                  alignment: 'left'
+                },
+                {
+                  text: `Transport: ${this.printInvoiceDetails.transport}`,
+                  alignment: 'left'
+                },
+                {
+                  text: `Date & Time of Supply: ${this.printInvoiceDetails.supplyDate}`,
+                  alignment: 'left'
+                },
+                {
+                  text: `Place of Supply: ${this.printInvoiceDetails.supplyPlace}`,
+                  alignment: 'left'
+                },
+              ],
+            ]
+          },
+          {
+            margin: [0, 15, 0, 2],
+            table: {
+              headerRows: 1,
+              widths: ['auto', 'auto', '*', 'auto', 'auto', 'auto', 'auto'],
+              body: [
+                ['Sr No', 'Design No', 'Description', 'HSN Code', 'Quantity', 'Rate', 'Amount'],
+                ...this.printInvoiceDetails?.invoiceItems?.map((inv: any, index: number) =>
+                  ([index + 1, inv.code, inv.description, inv.hsnCode, inv.quantity, inv.rate, inv.amount])),
+                [{ text: `Rupees in words: ${this.printInvoiceDetails.amountInWords}`, colSpan: 3, rowSpan: 2 }, {}, {}, { text: `CGST ${this.printInvoiceDetails.cgstPer}`, bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails.cgstAmount, colSpan: 2, alignment: 'center' }, {}],
+                [{}, {}, {}, { text: `SGST ${this.printInvoiceDetails.sgstPer}`, bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails.cgst, colSpan: 2, alignment: 'center' }, {}],
+                [{}, {}, {}, { text: 'Total Amount', bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails.totalAmount, bold: true, colSpan: 2, alignment: 'center' }, {}],
+              ]
+            }
+          },
+          {
+            margin: [0, 15, 0, 2],
+            table: {
+              headerRows: 1,
+              widths: ["*", 'auto', 'auto', 'auto', 'auto', 'auto'],
+              body: [
+                ['HSN Code', 'Pcs', 'GST', 'Taxable Value', 'CGST', 'SGST'],
+                ...subData?.map((inv: any) =>
+                  ([inv.hsnCode, inv.quantity, inv.gst, inv.taxableAmount, inv.cgst, inv.sgst])),
+              ]
+            }
+          },
+          {
+            text: 'Terms and Conditions',
+            style: 'sectionHeader',
+            italics: true
+          },
+          {
+            columns: [
+              [{
+                italics: true,
+                ol: [
+                  'Payment within 45 Days SUBJECT TO MUMBAI JURISDICTION.',
+                  'In case of unpaid bill interest @24% will be charged extra from the date of bill.',
+                  'Payment of this bill will be accepted only by payee A/c or draft.',
+                  'Goods once sold not be taken back.',
+                  'Once the goods are delivered We are not responsible for any claim.',
+                ],
+              }],
+            ]
+          },
+          {
+            columns: [
+              [{
+                margin: [0, 15, 0, 2],
+                text: 'Certified the particular given above are true correct & the amount indicated represent th price actually charged and their is no flow of additional consideration directly & indirectly from the buyers.'
+              }],
+              [
+                {
+                  margin: [0, 15, 0, 2],
+                  text: `FOR ${currentCompany.companyName}`, alignment: 'right'
+                },
+                {
+                  text: ' Auth. Signatory', alignment: 'right', margin: [0, 40, 0, 2]
+                }
+              ],
+            ]
+          },
+        ],
+        styles: {
+          sectionHeader: {
+            bold: true,
+            decoration: 'underline',
+            fontSize: 14,
+            margin: [0, 10, 0, 10]
+          }
+        }
+      };
+    } catch (err) {
+      this.messageService.add({ severity: 'error', summary: 'Unexpected system error while generating invoice', detail: err });
+      return null;
+    }
 
-  calculateTableHeight(): string {
-    const viewportHeight = window.innerHeight; // Get the viewport height
-    const percentage = 80; // Adjust this value as needed
-    const calculatedHeight = `calc(${viewportHeight}px * ${percentage / 100})`;
-    return calculatedHeight;
   }
 
 }
