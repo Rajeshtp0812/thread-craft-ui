@@ -5,6 +5,7 @@ import { ProductService } from '../../../products/product.service';
 import { VendorService } from '../../../vendors/vendor.service';
 import { FormControl, FormGroup } from '@angular/forms';
 import { debounceTime } from 'rxjs';
+import { DateTime } from 'luxon';
 
 @Component({
   selector: 'app-product-allotment-main',
@@ -27,7 +28,7 @@ export class ProductAllotmentMainComponent implements OnInit {
     this.form = new FormGroup({
       vendor: new FormControl(),
       product: new FormControl(),
-      quantity: new FormControl(),
+      productQuantity: new FormControl(),
       size: new FormControl(),
       vendorRate: new FormControl(),
       deliveryDate: new FormControl(),
@@ -45,7 +46,7 @@ export class ProductAllotmentMainComponent implements OnInit {
   }
 
   onValueChanges(): void {
-    const quantityControl = this.form.get('quantity');
+    const quantityControl = this.form.get('productQuantity');
     const rateControl = this.form.get('vendorRate');
     const advancePaymentControl = this.form.get('advancePayment');
 
@@ -113,6 +114,7 @@ export class ProductAllotmentMainComponent implements OnInit {
       let payload = this.form.getRawValue();
       payload['vendor'] = payload['vendor']?.vendorId;
       payload['product'] = payload['product']?.productId;
+      payload['deliveryDate'] = DateTime.fromJSDate(new Date(payload['deliveryDate'])).toFormat("dd/MM/yyyy");
       if (this.selectedModal === MODAL_TYPE.ADD) {
         await this.productService.allotProduct(payload);
         this.messageService.add({ severity: 'success', summary: 'Product allotted successfully', detail: '' });

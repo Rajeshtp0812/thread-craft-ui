@@ -39,18 +39,18 @@
                             formControlName="product"
                         ></p-dropdown>
                     </div>
-                    <div class="col-2">
+                    <div class="col-2 md:col-2">
                         <label htmlFor="companyName" class="required"
                             >Quantity</label
                         >
                         <p-inputNumber
                             mode="decimal"
                             [useGrouping]="false"
-                            formControlName="quantity"
+                            formControlName="productQuantity"
                         >
                         </p-inputNumber>
                     </div>
-                    <div class="col-12 md:col-5">
+                    <div class="col-12 md:col-3">
                         <label htmlFor="email" class="required"
                             >Vendor Rate</label
                         >
@@ -61,9 +61,21 @@
                         >
                         </p-inputNumber>
                     </div>
+                    <div class="col-2 md:col-2">
+                        <label htmlFor="companyName" class="required"
+                            >Size</label
+                        >
+                        <p-inputNumber
+                            mode="decimal"
+                            [useGrouping]="false"
+                            formControlName="size"
+                        >
+                        </p-inputNumber>
+                    </div>
                     <div class="col-12 md:col-5">
-                        <label htmlFor="contact">Delivery Date</label>
+                        <label htmlFor="deliveryDate">Delivery Date</label>
                         <p-calendar
+                            dateFormat="dd/mm/yy"
                             appendTo="body"
                             formControlName="deliveryDate"
                         ></p-calendar>

@@ -122,8 +122,9 @@ export class ProductConfigComponent {
     Object.keys(this.form.controls).forEach(key => {
       if (key === 'date') {
         formCtrl[key].setValue(DateTime.fromFormat(value[key], 'dd/MM/yyyy'));
+      } else {
+        formCtrl[key].setValue(value[key]);
       }
-      formCtrl[key].setValue(value[key]);
     });
   }
 }

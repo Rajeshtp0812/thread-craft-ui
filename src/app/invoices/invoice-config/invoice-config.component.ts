@@ -127,7 +127,6 @@ export class InvoiceConfigComponent {
   }
 
   deleteRow(index: number) {
-    console.log(index)
     this.items.removeAt(index);
     this.calculateTotalAmount();
   }

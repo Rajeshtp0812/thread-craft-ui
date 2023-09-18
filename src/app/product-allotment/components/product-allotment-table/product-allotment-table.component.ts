@@ -16,7 +16,7 @@ export class ProductAllotmentTableComponent {
     { field: 'companyName', header: 'Vendor' },
     { field: 'deliveryDate', header: 'Date' },
     { field: 'size', header: 'Size' },
-    { field: 'quantity', header: 'Quantity' },
+    { field: 'productQuantity', header: 'Quantity' },
     { field: 'vendorRate', header: 'Rate' },
     { field: 'totalAmount', header: 'Total Amount' },
     { field: 'balanceAmount', header: 'Balance Amount' },

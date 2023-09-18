@@ -49,7 +49,6 @@ export class ProductMainComponent {
         this.messageService.add({ severity: 'success', summary: 'Product added successfully', detail: '' });
       } else if (this.selectedModal === MODAL_TYPE.EDIT) {
         for (var pair of this.formData.entries()) {
-          console.log(pair[0] + ', ' + pair[1]);
         }
         await this.productService.updateProduct(this.editProductDetail.productId, this.formData);
         this.messageService.add({ severity: 'success', summary: 'Product updated succesfully', detail: '' });

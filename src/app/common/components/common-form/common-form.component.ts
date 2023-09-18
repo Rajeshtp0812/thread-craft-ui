@@ -105,6 +105,7 @@ export class CommonFormComponent implements OnInit, OnChanges {
     if (event.value !== this.select) {
       this.selectedState = event.value;
       this.citiesOptions = this.stateCityService.getCitiesByState('IN', this.selectedState);
+      this.citiesOptions.unshift(this.select)
     } else {
       this.citiesOptions = [];
     }
