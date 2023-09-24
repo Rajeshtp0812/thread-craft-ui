@@ -23,12 +23,12 @@ export class CommonFormComponent implements OnInit, OnChanges {
   selectedCity = '';
   form: FormGroup;
   formRequiredFields = {
-    companyName: '',
-    email: '',
-    contact: '',
-    gst: '',
+    companyName: 'required',
+    email: 'required',
+    contact: 'required',
+    gst: 'required',
     address: 'required',
-    state: 'required',
+    state: 'require',
     city: 'required',
     pinCode: 'required'
   }
@@ -49,9 +49,9 @@ export class CommonFormComponent implements OnInit, OnChanges {
   constructor(private readonly stateCityService: CountryStateCityService) {
     this.form = new FormGroup({
       companyName: new FormControl(''),
-      email: new FormControl('', [customPatternValidator(EMAIL, 'Email is invalid')]),
-      contact: new FormControl('', [customPatternValidator(CONTACT, 'Contact is invalid')]),
-      gst: new FormControl('', [customPatternValidator(GST, 'GST number is invalid')]),
+      email: new FormControl('', [Validators.required, customPatternValidator(EMAIL, 'Email is invalid')]),
+      contact: new FormControl('', [Validators.required, customPatternValidator(CONTACT, 'Contact is invalid')]),
+      gst: new FormControl('', [Validators.required, customPatternValidator(GST, 'GST number is invalid')]),
       address: new FormControl('', [Validators.required]),
       state: new FormControl('', [Validators.required]),
       city: new FormControl('', [Validators.required]),
@@ -75,17 +75,30 @@ export class CommonFormComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     let formCtrl = this.form.controls;
-    if (this.wrapperComponentName === WRAPPER_COMPONENT.COMPANY) {
-      this.formRequiredFields.companyName = this.required;
-      formCtrl['companyName'].addValidators(Validators.required)
-    } else if (this.wrapperComponentName === WRAPPER_COMPONENT.CLIENT) {
+    if (this.wrapperComponentName === WRAPPER_COMPONENT.CLIENT) {
+      this.formRequiredFields = {
+        companyName: 'required',
+        email: '',
+        contact: '',
+        gst: '',
+        address: '',
+        state: '',
+        city: '',
+        pinCode: ''
+      };
+      Object.keys(formCtrl).forEach(key => {
+        formCtrl[key].clearValidators();
+        formCtrl[key].updateValueAndValidity();
+      });
+      formCtrl['companyName'].addValidators([Validators.required]);
+    } else if (this.wrapperComponentName === WRAPPER_COMPONENT.COMPANY) {
       this.formRequiredFields.contact = this.required;
       formCtrl['contact'].addValidators(Validators.required)
     } else if (this.wrapperComponentName === WRAPPER_COMPONENT.VENDOR) {
-      this.formRequiredFields.companyName = this.required;
-      this.formRequiredFields.contact = this.required;
-      formCtrl['companyName'].addValidators(Validators.required)
-      formCtrl['contact'].addValidators(Validators.required)
+      this.form.removeControl('email');
+      this.form.removeControl('gst');
+      this.form.addControl('alternateContact', new FormControl());
+      this.form.updateValueAndValidity();
     }
     if (changes['updateFormData']?.currentValue) {
       this.setupFormData();
@@ -93,11 +106,9 @@ export class CommonFormComponent implements OnInit, OnChanges {
   }
 
   emitFormData() {
-    if (this.form.status === 'VALID') {
-      this.formData.emit({ data: this.form.getRawValue(), status: true });
-    } else {
-      this.formData.emit({ data: this.form.getRawValue(), status: false });
-    }
+    let formControlValues = this.form.getRawValue();
+    Object.keys(formControlValues).forEach(key => (formControlValues[key] = formControlValues[key] === null ? '' : formControlValues[key]));
+    this.formData.emit({ data: formControlValues, status: this.form.status === 'VALID' });
   }
 
   selectState(event: any) {

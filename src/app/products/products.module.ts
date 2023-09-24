@@ -12,6 +12,7 @@ import { ButtonModule } from 'primeng/button';
 import { FileUploadModule } from 'primeng/fileupload';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     DialogModule,
     ButtonModule,
     FileUploadModule,
-    CalendarModule
+    CalendarModule,
+    InputNumberModule
   ],
   providers: [DatePipe]
 })

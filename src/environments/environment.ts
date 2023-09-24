@@ -1,4 +1,3 @@
-// const BASE_URL = 'http://localhost:8000/'
 const BASE_URL = 'https://backend.services.sabafashion.in/'
 
 export const environment = {
@@ -9,5 +8,6 @@ export const environment = {
   invoiceServiceURL: BASE_URL + 'invoice/',
   clientServiceURL: BASE_URL + 'client/',
   companyURL: BASE_URL + 'company/',
-  vendorURL: BASE_URL + 'vendor/'
+  vendorURL: BASE_URL + 'vendor/',
+  dashboardURL: BASE_URL + 'dashboard/'
 };

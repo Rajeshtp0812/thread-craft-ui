@@ -11,6 +11,8 @@ export class VendorConfigComponent {
   selectedModal: MODAL_TYPE;
   ownerName = '';
   isDialogOpen = false;
+  formData = null;
+  isFormValid = false;
 
   @Input() set isVendorFormOpen(value) {
     if (!value) {
@@ -29,6 +31,14 @@ export class VendorConfigComponent {
   @Output() formDataEmitter = new EventEmitter();
 
   setFormData(data: any) {
-    this.formDataEmitter.emit({ data: { ownerName: this.ownerName, ...data.data }, status: data.status });
+    this.isFormValid = data.status;
+    this.formData = { data: { ...data.data } };
+    this.sendFormData();
+  }
+
+  sendFormData(event?) {
+    this.formData['data']['ownerName'] = this.ownerName;
+    this.formData['status'] = this.isFormValid && !!this.ownerName;
+    this.formDataEmitter.emit(this.formData);
   }
 }

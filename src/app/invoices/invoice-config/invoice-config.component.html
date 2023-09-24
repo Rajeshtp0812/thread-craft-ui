@@ -1,18 +1,19 @@
 <p-accordion [activeIndex]="activeIndex" [multiple]="false">
     <p-accordionTab header="Billing Information">
         <div class="p-fluid p-formgrid grid">
-            <div class="col-12 md:col-4">
-                <label htmlFor="email">Client</label>
+            <div class="col-12 md:col-6">
+                <label htmlFor="email" class="required">Client</label>
+
                 <p-dropdown
                     [options]="clients"
                     [filter]="true"
-                    [(ngModel)]="invoices.client"
+                    [(ngModel)]="invoices.clientId"
                     appendTo="body"
-                    (ngModelChange)="modelChanged($event, 'client')"
+                    (ngModelChange)="modelChanged($event, 'clientId')"
                 ></p-dropdown>
             </div>
-            <div class="col-12 md:col-4">
-                <label htmlFor="contact">Invoice Number</label>
+            <div class="col-12 md:col-6">
+                <label htmlFor="contact" class="required">Invoice Number</label>
                 <input
                     pInputText
                     id="contact"
@@ -21,30 +22,55 @@
                     (ngModelChange)="modelChanged($event, 'invoiceNumber')"
                 />
             </div>
-            <div class="col-12 md:col-4">
+        </div>
+        <div class="p-fluid p-formgrid grid">
+            <div class="col-12 md:col-6">
                 <label htmlFor="contact">Date of supply</label>
                 <p-calendar
                     appendTo="body"
-                    dateFormat="dd.mm.yy"
+                    dateFormat="dd/mm/yy"
                     [(ngModel)]="invoices.supplyDate"
                     (ngModelChange)="modelChanged($event, 'supplyDate')"
                 ></p-calendar>
+            </div>
+
+            <div class="col-12 md:col-6">
+                <label htmlFor="email">GST Number</label>
+                <input
+                    pInputText
+                    id="gstNumber"
+                    type="text"
+                    [(ngModel)]="invoices.gstNumber"
+                    (ngModelChange)="modelChanged($event, 'gstNumber')"
+                />
             </div>
         </div>
     </p-accordionTab>
     <p-accordionTab header="Shipping Details">
         <div class="p-fluid p-formgrid grid">
-            <div class="col-12 md:col-4">
+            <div class="col-12 md:col-6">
                 <label htmlFor="email">Transportation Type</label>
                 <input
                     pInputText
-                    id="transportationType"
+                    id="transportMode"
                     type="text"
-                    [(ngModel)]="invoices.transportationType"
-                    (ngModelChange)="modelChanged($event, 'transportationType')"
+                    [(ngModel)]="invoices.transportMode"
+                    (ngModelChange)="modelChanged($event, 'transportMode')"
                 />
             </div>
-            <div class="col-12 md:col-4">
+            <div class="col-12 md:col-6">
+                <label htmlFor="city">Contact</label>
+                <input
+                    pInputText
+                    id="contact"
+                    type="text"
+                    [(ngModel)]="invoices.contact"
+                    (ngModelChange)="modelChanged($event, 'contact')"
+                />
+            </div>
+        </div>
+        <div class="p-fluid p-formgrid grid">
+            <div class="col-12 md:col-6">
                 <label htmlFor="city">State</label>
                 <p-dropdown
                     [options]="statesOptions"
@@ -55,7 +81,7 @@
                     appendTo="body"
                 ></p-dropdown>
             </div>
-            <div class="col-12 md:col-4">
+            <div class="col-12 md:col-6">
                 <label htmlFor="state">City</label>
                 <p-dropdown
                     [options]="citiesOptions"
@@ -66,6 +92,8 @@
                     appendTo="body"
                 ></p-dropdown>
             </div>
+        </div>
+        <div class="p-fluid p-formgrid grid">
             <div class="col-12">
                 <label htmlFor="address">Address</label>
                 <textarea
@@ -95,7 +123,7 @@
             </div>
         </div>
         <div class="p-fluid p-formgrid grid" formArrayName="invoiceItems">
-            <ng-container *ngFor="let skill of items.controls; let i = index">
+            <ng-container *ngFor="let item of items.controls; let i = index">
                 <ng-container [formGroupName]="i">
                     <div class="col-2">
                         <p-dropdown
@@ -193,7 +221,7 @@
             <div class="col-1"></div>
         </div>
         <div class="p-fluid p-formgrid grid">
-            <div class="col"></div>
+            <div class="col">{{ amountInWords }}</div>
             <div class="col-2">{{ totalAmount }}</div>
             <div class="col-1"></div>
         </div>

@@ -17,7 +17,10 @@
     [closable]="false"
     [maximizable]="true"
 >
-    <app-invoice-config (sendFormData)="formData($event)"></app-invoice-config>
+    <app-invoice-config
+        (sendFormData)="formData($event)"
+        [editInvoiceData]="editProductDetails"
+    ></app-invoice-config>
 
     <ng-template pTemplate="footer">
         <button
@@ -35,6 +38,7 @@
             label="{{ selectedModal === 'edit' ? 'Save' : 'Create' }}"
             class="p-button-raised"
             [disabled]="!isValid"
+            (click)="save()"
         ></button>
     </ng-template>
 </p-dialog>

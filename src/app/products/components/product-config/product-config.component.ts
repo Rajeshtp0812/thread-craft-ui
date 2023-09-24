@@ -75,16 +75,15 @@ export class ProductConfigComponent {
   sendFormData() {
     const formData = new FormData();
     let products = this.form.getRawValue();
-    const date = DateTime.fromJSDate(new Date(products['date']));
-    const formattedDate = date.toFormat('dd/MM/yyyy');
-    products['date'] = formattedDate;
-
+    Object.keys(products).forEach(key => (products[key] = products[key] === null ? '' : products[key]));
+    const date = typeof products['date'] === 'string' ? DateTime.fromFormat(products['date'], 'dd/MM/yyyy') : DateTime.fromJSDate(new Date(products['date']));
+    products['date'] = date.toFormat("dd/MM/yyyy");
     Object.entries(products).forEach((product: any) => {
       formData.append(product[0], product[1]);
     });
     if (this.uploadedFiles.length) {
       formData.append('image', this.uploadedFiles[0]);
-    } else if (!this.uploadedFiles.length && this.editPreviewImg) {
+    } else if (!this.uploadedFiles.length && this.editPreviewImg === '') {
       formData.append('image', '');
     }
     this.formData.emit({ data: formData, status: this.form.status });
@@ -120,11 +119,7 @@ export class ProductConfigComponent {
   setFormData(value) {
     let formCtrl = this.form.controls;
     Object.keys(this.form.controls).forEach(key => {
-      if (key === 'date') {
-        formCtrl[key].setValue(DateTime.fromFormat(value[key], 'dd/MM/yyyy'));
-      } else {
-        formCtrl[key].setValue(value[key]);
-      }
+      formCtrl[key].setValue(value[key]);
     });
   }
 }

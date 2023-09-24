@@ -32,12 +32,12 @@
                         ></p-dropdown>
                     </div>
                     <div class="col-12 md:col-6">
-                        <label htmlFor="city" class="required">Product</label>
-                        <p-dropdown
-                            [options]="productOptions"
-                            [filter]="true"
+                        <label htmlFor="city">Product</label>
+                        <input
+                            pInputText
+                            type="text"
                             formControlName="product"
-                        ></p-dropdown>
+                        />
                     </div>
                     <div class="col-2 md:col-2">
                         <label htmlFor="companyName" class="required"
@@ -62,18 +62,20 @@
                         </p-inputNumber>
                     </div>
                     <div class="col-2 md:col-2">
-                        <label htmlFor="companyName" class="required"
-                            >Size</label
-                        >
-                        <p-inputNumber
+                        <label htmlFor="companyName">Size</label>
+                        <input
+                            pInputText
+                            type="text"
                             mode="decimal"
                             [useGrouping]="false"
                             formControlName="size"
-                        >
-                        </p-inputNumber>
+                            class="upper-case"
+                        />
                     </div>
                     <div class="col-12 md:col-5">
-                        <label htmlFor="deliveryDate">Delivery Date</label>
+                        <label htmlFor="deliveryDate" class="required"
+                            >Delivery Date</label
+                        >
                         <p-calendar
                             dateFormat="dd/mm/yy"
                             appendTo="body"
@@ -108,7 +110,9 @@
                         </p-inputNumber>
                     </div>
                     <div class="col-12">
-                        <label htmlFor="address">Description</label>
+                        <label htmlFor="address" class="required"
+                            >Description</label
+                        >
                         <textarea
                             pInputTextarea
                             id="address"

@@ -4,6 +4,7 @@ import { COMPANY, MODAL_TYPE } from '../../common/constants';
 import { ContextMenu } from 'primeng/contextmenu';
 import { PrintService } from '../services/print.service';
 import { MessageService } from 'primeng/api';
+import { InvoiceService } from '../services/invoice.service';
 
 @Component({
   selector: 'app-invoice-table',
@@ -13,49 +14,40 @@ import { MessageService } from 'primeng/api';
 export class InvoiceTableComponent {
   isDataLoading = false;
   cols = [
-    { field: 'client', header: 'Company' },
     { field: 'invoiceNumber', header: 'Invoice Number' },
-    { field: 'supplyDate', header: 'HSN Code' },
+    { field: 'supplyDate', header: 'Supply Date' },
+    { field: 'contact', header: 'Contact' },
+    { field: 'totalAmount', header: 'Total Amount' },
     { field: 'state', header: 'State' },
     { field: 'city', header: 'City' },
     { field: 'address', header: 'Address' }];
-
-  data = [{
-    client: "Test Client",
-    invoiceNumber: '95521165565',
-    supplyDate: '20/12/2023',
-    state: 'Maharashtra',
-    city: 'Mumbai',
-    address: 'Wadala',
-    cgstPer: 0,
-    sgstPer: 0,
-    gst: '12545fjkh55484',
-    contact: '9632587410',
-    transport: 'car',
-    supplyPlace: 'Mumbai',
-    invoiceItems: [{
-      code: 56489,
-      description: 'testingn jhsdcjh',
-      hsnCode: 965874,
-      quantity: 45,
-      rate: 656,
-      amount: 87549,
-    }]
-  }];
+  data = [];
   contextMenus: any[];
   @Output() openCompaniesForm = new EventEmitter();
   filterFields = [];
   printInvoiceDetails: any;
-
   @ViewChild('cm') contextMenu: ContextMenu
 
-
   constructor(private readonly printService: PrintService,
-    private readonly messageService: MessageService) {
-    this.messageService.add({ severity: 'info', summary: 'Work in progress', detail: '' })
+    private readonly messageService: MessageService,
+    private readonly invoiceService: InvoiceService) {
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
+    this.fetchData();
+    this.invoiceService.refetchData.subscribe(() => this.fetchData());
+  }
+
+  async fetchData() {
+    this.isDataLoading = true;
+    try {
+      let response: any = await this.invoiceService.getInvoices();
+      this.data = response.data;
+    } catch (error) {
+      this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
+    } finally {
+      this.isDataLoading = false;
+    }
   }
 
   onContextMenu(event: MouseEvent, type: String, data = null) {
@@ -93,9 +85,10 @@ export class InvoiceTableComponent {
     this.contextMenu.show(event);
   }
 
-  deleteClient(data) {
+  async deleteClient(data) {
+    await this.invoiceService.deleteInvoice(data.item.data.invoiceId);
+    this.invoiceService.refetchData.next(true);
   }
-
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');

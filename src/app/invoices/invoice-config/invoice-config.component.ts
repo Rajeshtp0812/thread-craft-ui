@@ -1,30 +1,25 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CountryStateCityService } from '../../common/service/country-state-city.service';
 import { ClientService } from '../../clients/client.service';
 import { MessageService } from 'primeng/api';
 import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ProductService } from '../../products/product.service';
-
-const requiredFields = []
-
-interface InvoiceItems {
-  id?: number | string,
-  code: string,
-  description: string,
-  hsnCode: string,
-  rate: number,
-  quantity: number,
-  amount: number
-}
+import * as converter from 'number-to-words';
+import { DateTime } from 'luxon';
+import { InvoiceService } from '../services/invoice.service';
 
 interface Invoice {
-  client?: any,
+  clientId?: any,
   invoiceNumber?: string,
-  transportationType?: string,
+  transportMode?: string,
   supplyDate?: string,
   address?: string,
   state?: string,
   city?: string,
+  gstNumber?: string,
+  contact?: string,
+  totalAmount?: number,
+  amountInWords?: string,
   invoiceItems: any[]
 }
 
@@ -33,7 +28,7 @@ interface Invoice {
   templateUrl: './invoice-config.component.html',
   styleUrls: ['./invoice-config.component.scss']
 })
-export class InvoiceConfigComponent {
+export class InvoiceConfigComponent implements OnChanges {
   readonly select = 'Select'
   statesOptions: string[] = [];
   citiesOptions: string[] = [];
@@ -50,32 +45,39 @@ export class InvoiceConfigComponent {
   sgstPer = 0;
   cgstAmount = 0;
   sgstAmount = 0;
+  amountInWords: string = '';
 
+  @Input() editInvoiceData = null;
   @Output() sendFormData = new EventEmitter();
 
   constructor(private readonly stateCityService: CountryStateCityService,
     private readonly clientService: ClientService,
     private readonly messageService: MessageService,
     private fb: FormBuilder,
-    private readonly productService: ProductService) {
+    private readonly productService: ProductService,
+    private readonly invoiceService: InvoiceService,
+    private readonly cdRef: ChangeDetectorRef) {
     this.itemsForm = this.fb.group({
       invoiceItems: this.fb.array([this.newItems()]),
     });
-  }
-
-  ngOnInit(): void {
     this.statesOptions = this.stateCityService.getStatesByCountry('IN');
     this.statesOptions.unshift(this.select);
     this.fetchClient();
     this.fetchProducts()
   }
 
-  ngOnChanges() {
+  ngOnInit(): void {
 
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['editInvoiceData'].currentValue?.data) {
+      this.setupForm();
+    }
+  }
+
   onValueChanges() {
-    this.itemsForm.valueChanges.subscribe()
+    this.itemsForm.valueChanges.subscribe(() => this.formData());
   }
 
   async fetchProducts() {
@@ -92,6 +94,7 @@ export class InvoiceConfigComponent {
     try {
       let clients = await this.clientService.getClients();
       this.clients = clients?.data?.map(client => ({ label: client.companyName, value: client }));
+      this.clients.unshift({ label: 'Select', value: '' });
     } catch (err) {
       this.messageService.add({ severity: "error", summary: "Unexpected error occured" });
     }
@@ -132,7 +135,14 @@ export class InvoiceConfigComponent {
   }
 
   modelChanged(value, key) {
-    this.invoices[key] = value;
+    if (key === 'clientId') {
+      this.invoices[key] = value?.clientId;
+    } else if (key === 'supplyDate') {
+      const date = typeof value === 'string' ? DateTime.fromFormat(value, 'dd/MM/yyyy') : DateTime.fromJSDate(new Date(value));
+      this.invoices[key] = date.toFormat("dd/MM/yyyy");
+    } else {
+      this.invoices[key] = value;
+    }
   }
 
   onProductSelect(evt, index) {
@@ -163,17 +173,93 @@ export class InvoiceConfigComponent {
     });
     if (this.cgstPer > 0) {
       this.cgstAmount = (totalAmountWoGst * this.cgstPer) / 100;
+    } else {
+      this.cgstAmount = 0;
     }
 
     if (this.sgstPer > 0) {
       this.sgstAmount = (totalAmountWoGst * this.sgstPer) / 100;
+    } else {
+      this.sgstAmount = 0;
     }
 
     this.totalAmount = totalAmountWoGst + this.cgstAmount + this.sgstAmount;
+    let amountInWords = this.toCapitalize(converter.toWords(this.totalAmount));
+    let decimalPoint = this.decimalNumberToWord(this.totalAmount);
+    this.amountInWords = `${amountInWords} ${decimalPoint}`;
+    this.formData();
   }
 
   formData() {
-    this.invoices['invoiceItems'] = this.itemsForm.getRawValue();
-    this.sendFormData.emit({ data: this.invoices, status: this.itemsForm.status === 'VALID' });
+    this.invoices['amountInWords'] = this.amountInWords;
+    this.invoices['cgstPercent'] = this.cgstPer;
+    this.invoices['cgstAmount'] = this.cgstAmount;
+    this.invoices['sgstPercent'] = this.sgstPer;
+    this.invoices['sgstAmount'] = this.sgstAmount;
+    this.invoices['totalAmount'] = this.totalAmount;
+    let items = this.itemsForm.getRawValue()?.invoiceItems;
+    this.invoices['invoiceItems'] = items;
+    this.invoices.invoiceItems?.forEach(item => {
+      item['code'] = item['code']?.code
+    });
+    let isValid = this.itemsForm.status === 'VALID' && (this.invoices.clientId && this.invoices.invoiceNumber);
+    console.log(this.itemsForm.status === 'VALID', this.invoices.clientId, this.invoices.invoiceNumber)
+    this.sendFormData.emit({ data: this.invoices, status: isValid });
+  }
+
+  decimalNumberToWord(num: any) {
+    let fraction = num.toString().split('.')[1];
+    let numbers = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+    let word = '';
+    if (fraction) {
+      for (let i = 0; i < fraction?.length; i++) {
+        word += ' ' + numbers[Number(fraction[i])]
+      }
+    }
+    return word ? `Point ${word}` : word;
+  }
+
+  toCapitalize(str: any) {
+    return str.replace(/(^\w|\s\w)(\S*)/g, (_: any, m1: any, m2: any) => m1.toUpperCase() + m2.toLowerCase())
+  }
+
+  async setupForm() {
+    try {
+      let invoiceDetail = await this.invoiceService.getInvoice(this.editInvoiceData?.data.invoiceId);
+      this.invoices['clientId'] = { label: invoiceDetail?.data['client']['companyName'], value: invoiceDetail?.data['client'] };
+      this.invoices['invoiceNumber'] = invoiceDetail?.data['invoiceNumber'];
+      this.invoices['supplyDate'] = invoiceDetail?.data['supplyDate'];
+      this.invoices['gstNumber'] = invoiceDetail?.data['gstNumber'];
+      this.invoices['transportMode'] = invoiceDetail?.data['transportMode'];
+      this.invoices['contact'] = invoiceDetail?.data['contact'];
+      this.invoices['state'] = invoiceDetail?.data['state'];
+      this.selectState({ value: this.invoices['state'] });
+      this.invoices['city'] = invoiceDetail?.data['city'];
+      this.invoices['address'] = invoiceDetail?.data['address'];
+      this.amountInWords = invoiceDetail?.data['amountInWords'];
+      this.cgstPer = invoiceDetail?.data['cgstPercent'];
+      this.cgstAmount = invoiceDetail?.data['cgstAmount'];
+      this.sgstPer = invoiceDetail?.data['sgstPercent'];
+      this.sgstAmount = invoiceDetail?.data['sgstAmount'];
+      this.totalAmount = invoiceDetail?.data['totalAmount'];
+      invoiceDetail?.data?.invoiceItems?.forEach((item, index) => {
+        Object.keys(item).forEach(key => {
+          if (key !== 'invoiceItemId' && key !== 'code') {
+            this.itemsForm.get("invoiceItems")['controls'][index]['controls'][key].setValue(item[key]);
+          } else if (key === 'code') {
+            let productValue = this.products.find(product => product.label === item[key]);
+            this.itemsForm.get("invoiceItems")['controls'][index]['controls'][key].setValue({ label: item[key], value: productValue });
+            this.itemsForm.get("invoiceItems")['controls'][index]['controls'][key].updateValueAndValidity()
+            console.log(this.itemsForm.get("invoiceItems")['controls'][index]['controls'][key], key)
+          }
+        });
+        if (index < invoiceDetail?.data?.invoiceItems?.length - 1) {
+          this.addRow();
+        }
+      });
+      this.formData();
+    } catch (err) {
+
+    }
   }
 }

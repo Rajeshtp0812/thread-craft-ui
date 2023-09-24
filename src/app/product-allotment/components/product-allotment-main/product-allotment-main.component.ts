@@ -41,7 +41,6 @@ export class ProductAllotmentMainComponent implements OnInit {
 
   async ngOnInit() {
     await this.fetchVendors();
-    await this.fetchProducts();
     this.onValueChanges();
   }
 
@@ -92,19 +91,6 @@ export class ProductAllotmentMainComponent implements OnInit {
     }
   }
 
-  async fetchProducts() {
-    try {
-      let reponse: any = await this.productService.getProducts();
-      this.productOptions = reponse?.data?.map(product => {
-        delete product['company'];
-        return { label: product.code, value: product }
-      });
-      this.productOptions.unshift({ label: 'Select', value: '' });
-    } catch (err) {
-      this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
-    }
-  }
-
   closeForm() {
     this.isAllotmentFormOpen = false;
   }
@@ -112,9 +98,10 @@ export class ProductAllotmentMainComponent implements OnInit {
   async saveClient() {
     try {
       let payload = this.form.getRawValue();
+      Object.keys(payload).forEach(key => (payload[key] = payload[key] === null ? '' : payload[key]));
       payload['vendor'] = payload['vendor']?.vendorId;
-      payload['product'] = payload['product']?.productId;
-      payload['deliveryDate'] = DateTime.fromJSDate(new Date(payload['deliveryDate'])).toFormat("dd/MM/yyyy");
+      const date = typeof payload['deliveryDate'] === 'string' ? DateTime.fromFormat(payload['deliveryDate'], 'dd/MM/yyyy') : DateTime.fromJSDate(new Date(payload['deliveryDate']));
+      payload['deliveryDate'] = date.toFormat("dd/MM/yyyy");
       if (this.selectedModal === MODAL_TYPE.ADD) {
         await this.productService.allotProduct(payload);
         this.messageService.add({ severity: 'success', summary: 'Product allotted successfully', detail: '' });

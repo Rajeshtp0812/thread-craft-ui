@@ -1,5 +1,9 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, lastValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
+
+const URL = environment.dashboardURL;
 
 export interface AppConfig {
     inputStyle: string;
@@ -41,6 +45,8 @@ export class LayoutService {
         staticMenuMobileActive: false,
         menuHoverActive: false
     };
+
+    constructor(private http: HttpClient) { }
 
     private configUpdate = new Subject<AppConfig>();
 
@@ -97,6 +103,10 @@ export class LayoutService {
 
     onConfigUpdate() {
         this.configUpdate.next(this.config);
+    }
+
+    getDashboardData(): Promise<any> {
+        return lastValueFrom(this.http.get(URL, {}));
     }
 
 }

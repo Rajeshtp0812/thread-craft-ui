@@ -20,12 +20,8 @@
             </div>
             <div class="col-12 md:col-4">
                 <label htmlFor="companyName" class="required">Rate</label>
-                <input
-                    pInputText
-                    id="companyName"
-                    type="text"
-                    formControlName="rate"
-                />
+                <p-inputNumber mode="decimal" [min]="0" formControlName="rate">
+                </p-inputNumber>
             </div>
             <div class="col-12 md:col-4">
                 <label htmlFor="companyName" class="required">Code</label>
@@ -39,6 +35,7 @@
             <div class="col-12 md:col-4">
                 <label htmlFor="size">Size</label>
                 <input
+                    class="upper-case"
                     pInputText
                     id="size"
                     type="text"

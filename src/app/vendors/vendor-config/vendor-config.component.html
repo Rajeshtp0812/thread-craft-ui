@@ -1,7 +1,13 @@
 <ng-container>
     <div class="col-12">
-        <label htmlFor="ownerName" class="">Owner Name</label>
-        <input pInputText id="ownerName" type="text" [(ngModel)]="ownerName" />
+        <label htmlFor="ownerName" class="required">Owner Name</label>
+        <input
+            pInputText
+            id="ownerName"
+            type="text"
+            [(ngModel)]="ownerName"
+            (ngModelChange)="sendFormData($event)"
+        />
     </div>
     <app-common-form
         (formData)="setFormData($event)"
