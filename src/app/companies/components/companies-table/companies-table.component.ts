@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 import { Table } from 'primeng/table';
-import { MODAL_TYPE } from '../../../common/constants';
+import { COMPANY, MODAL_TYPE } from '../../../common/constants';
 import { ContextMenu } from 'primeng/contextmenu';
 import { CompaniesService } from '../../companies.service';
 import { MessageService } from 'primeng/api';
@@ -26,11 +26,14 @@ export class CompaniesTableComponent {
   frozen = true;
   @Output() openCompaniesForm = new EventEmitter();
   filterFields = [];
+  selectedCompany = null;
 
   @ViewChild('cm') contextMenu: ContextMenu
 
   constructor(private readonly companyService: CompaniesService,
-    private readonly messageService: MessageService) { }
+    private readonly messageService: MessageService) {
+    this.selectedCompany = JSON.parse(localStorage.getItem(COMPANY));
+  }
 
   ngOnInit() {
     this.filterFields = this.cols.map(col => col.field);
@@ -82,6 +85,9 @@ export class CompaniesTableComponent {
   async deleteCompany(data) {
     if (this.data.length === 1) {
       this.messageService.add({ severity: 'info', summary: 'Cannot delete. At least one company must remain', detail: '' });
+      return;
+    } else if (data.item.data.companyId === this.selectedCompany.companyId) {
+      this.messageService.add({ severity: 'info', summary: 'Cannot delete. currently logged in company', detail: '' });
       return;
     }
     try {
