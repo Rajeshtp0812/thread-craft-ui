@@ -183,18 +183,18 @@ export class InvoiceConfigComponent implements OnChanges {
       totalAmountWoGst += Number(formCtrl['controls']?.amount?.value);
     });
     if (this.cgstPer > 0) {
-      this.cgstAmount = (totalAmountWoGst * this.cgstPer) / 100;
+      this.cgstAmount = Number(((totalAmountWoGst * this.cgstPer) / 100).toFixed(2));
     } else {
       this.cgstAmount = 0;
     }
 
     if (this.sgstPer > 0) {
-      this.sgstAmount = (totalAmountWoGst * this.sgstPer) / 100;
+      this.sgstAmount = Number(((totalAmountWoGst * this.sgstPer) / 100).toFixed(2));
     } else {
       this.sgstAmount = 0;
     }
 
-    this.totalAmount = totalAmountWoGst + this.cgstAmount + this.sgstAmount;
+    this.totalAmount = Number((totalAmountWoGst + this.cgstAmount + this.sgstAmount).toFixed(2));
     let amountInWords = this.toCapitalize(converter.toWords(this.totalAmount));
     let decimalPoint = this.decimalNumberToWord(this.totalAmount);
     this.amountInWords = `${amountInWords} ${decimalPoint}`;
