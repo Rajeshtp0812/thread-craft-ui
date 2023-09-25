@@ -12,10 +12,6 @@ export class PrintService {
     constructor(private readonly messageService: MessageService) { }
 
     generatePDF(docsDefinition: any) {
-        try {
-            pdfMake.createPdf(docsDefinition).print();
-        } catch (err) {
-            this.messageService.add({ severity: 'error', summary: 'Unexpected system error while generating invoice', detail: err });
-        }
+        pdfMake.createPdf(docsDefinition).print();
     }
 }

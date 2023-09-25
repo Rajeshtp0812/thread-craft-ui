@@ -94,9 +94,15 @@ export class InvoiceTableComponent {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
 
-  printInvoice(selectedInvoice: any) {
-    this.printInvoiceDetails = Object.entries(selectedInvoice.item.data).reduce((a: any, [k, v]) => (v == null ? a : (a[k] = v, a)), {});
-    this.printService.generatePDF(this.getPrintConfiguration());
+  async printInvoice(selectedInvoice: any) {
+    try {
+      let response = await this.invoiceService.getInvoice(selectedInvoice.item.data.invoiceId);
+      this.printInvoiceDetails = response.data;
+      this.printInvoiceDetails = Object.entries(this.printInvoiceDetails).reduce((a: any, [k, v]) => (v == null ? a : (a[k] = v, a)), {});
+      this.printService.generatePDF(this.getPrintConfiguration());
+    } catch (err) {
+
+    }
   }
 
   getPrintConfiguration() {
@@ -104,7 +110,6 @@ export class InvoiceTableComponent {
       let hsnCodes: any = [];
       let subData: any = [];
       let currentCompany = JSON.parse(localStorage.getItem(COMPANY));
-
       this.printInvoiceDetails?.invoiceItems?.forEach((inv: any, index: number) => {
         if (!hsnCodes.includes(inv.hsnCode)) {
           hsnCodes.push(inv.hsnCode);
@@ -112,13 +117,13 @@ export class InvoiceTableComponent {
       });
       hsnCodes?.forEach((hsnCode: any) => {
         let tempInvoiceDetails: any = { hsnCode: hsnCode, quantity: 0, gst: 0, taxableAmount: 0, cgst: 0, sgst: 0 };
-        tempInvoiceDetails.gst = Number(this.printInvoiceDetails.cgstPer) + Number(this.printInvoiceDetails.sgstPer);
+        tempInvoiceDetails.gst = Number(this.printInvoiceDetails.cgstPercent) + Number(this.printInvoiceDetails.sgstPercent);
         this.printInvoiceDetails?.invoiceItems?.forEach((inv: any) => {
           if (inv.hsnCode === hsnCode) {
             tempInvoiceDetails.quantity += inv.quantity;
             tempInvoiceDetails.taxableAmount += Number(inv.amount);
-            tempInvoiceDetails.cgst = (tempInvoiceDetails.taxableAmount * Number(this.printInvoiceDetails.cgstPer)) / 100;
-            tempInvoiceDetails.sgst = (tempInvoiceDetails.taxableAmount * Number(this.printInvoiceDetails.sgstPer)) / 100;
+            tempInvoiceDetails.cgst = (tempInvoiceDetails.taxableAmount * Number(this.printInvoiceDetails.cgstPercent)) / 100;
+            tempInvoiceDetails.sgst = (tempInvoiceDetails.taxableAmount * Number(this.printInvoiceDetails.sgstPercent)) / 100;
           }
         });
         subData.push(tempInvoiceDetails);
@@ -170,7 +175,7 @@ export class InvoiceTableComponent {
                 { text: `${this.printInvoiceDetails.address}`, margin: [0, 0, 5, 0] },
                 { text: `State: ${this.printInvoiceDetails.state}` },
                 { text: `Tel No: ${this.printInvoiceDetails.contact}` },
-                { text: `GST No: ${this.printInvoiceDetails.gst}` }
+                { text: `GST No: ${this.printInvoiceDetails.gstNumber}` }
               ],
               [
                 {
@@ -185,17 +190,13 @@ export class InvoiceTableComponent {
                   alignment: 'left'
                 },
                 {
-                  text: `Transport: ${this.printInvoiceDetails.transport}`,
+                  text: `Transport: ${this.printInvoiceDetails.transportMode}`,
                   alignment: 'left'
                 },
                 {
                   text: `Date & Time of Supply: ${this.printInvoiceDetails.supplyDate}`,
                   alignment: 'left'
-                },
-                {
-                  text: `Place of Supply: ${this.printInvoiceDetails.supplyPlace}`,
-                  alignment: 'left'
-                },
+                }
               ],
             ]
           },
@@ -208,8 +209,8 @@ export class InvoiceTableComponent {
                 ['Sr No', 'Design No', 'Description', 'HSN Code', 'Quantity', 'Rate', 'Amount'],
                 ...this.printInvoiceDetails?.invoiceItems?.map((inv: any, index: number) =>
                   ([index + 1, inv.code, inv.description, inv.hsnCode, inv.quantity, inv.rate, inv.amount])),
-                [{ text: `Rupees in words: ${this.printInvoiceDetails.amountInWords}`, colSpan: 3, rowSpan: 2 }, {}, {}, { text: `CGST ${this.printInvoiceDetails.cgstPer}`, bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails.cgstAmount, colSpan: 2, alignment: 'center' }, {}],
-                [{}, {}, {}, { text: `SGST ${this.printInvoiceDetails.sgstPer}`, bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails.cgst, colSpan: 2, alignment: 'center' }, {}],
+                [{ text: `Rupees in words: ${this.printInvoiceDetails.amountInWords}`, colSpan: 3, rowSpan: 2 }, {}, {}, { text: `CGST: ${this.printInvoiceDetails.cgstPercent} %`, bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails.cgstAmount, colSpan: 2, alignment: 'center' }, {}],
+                [{}, {}, {}, { text: `SGST: ${this.printInvoiceDetails.sgstPercent} %`, bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails.sgstAmount, colSpan: 2, alignment: 'center' }, {}],
                 [{}, {}, {}, { text: 'Total Amount', bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails.totalAmount, bold: true, colSpan: 2, alignment: 'center' }, {}],
               ]
             }

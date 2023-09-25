@@ -48,6 +48,12 @@ export class InvoiceConfigComponent implements OnChanges {
   amountInWords: string = '';
 
   @Input() editInvoiceData = null;
+  @Input() set clearForm(value) {
+    if (!value) {
+      this.invoices = { invoiceItems: [] };
+      this.itemsForm.reset();
+    }
+  }
   @Output() sendFormData = new EventEmitter();
 
   constructor(private readonly stateCityService: CountryStateCityService,
@@ -62,22 +68,18 @@ export class InvoiceConfigComponent implements OnChanges {
     });
     this.statesOptions = this.stateCityService.getStatesByCountry('IN');
     this.statesOptions.unshift(this.select);
-    this.fetchClient();
-    this.fetchProducts()
   }
 
-  ngOnInit(): void {
-
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
+  async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes['editInvoiceData'].currentValue?.data) {
-      this.setupForm();
+      await this.fetchClient();
+      await this.fetchProducts()
+      await this.setupForm();
     }
   }
 
-  onValueChanges() {
-    this.itemsForm.valueChanges.subscribe(() => this.formData());
+  onFormValueChange(index) {
+    this.items.at(index).valueChanges.subscribe(() => this.formData());
   }
 
   async fetchProducts() {
@@ -93,7 +95,10 @@ export class InvoiceConfigComponent implements OnChanges {
   async fetchClient() {
     try {
       let clients = await this.clientService.getClients();
-      this.clients = clients?.data?.map(client => ({ label: client.companyName, value: client }));
+      this.clients = clients?.data?.map(client => {
+        delete client['company'];
+        return { label: client.companyName, value: client }
+      });
       this.clients.unshift({ label: 'Select', value: '' });
     } catch (err) {
       this.messageService.add({ severity: "error", summary: "Unexpected error occured" });
@@ -105,6 +110,13 @@ export class InvoiceConfigComponent implements OnChanges {
     if (event.value !== this.select) {
       this.selectedState = event.value;
       this.citiesOptions = this.stateCityService.getCitiesByState('IN', this.selectedState);
+      if (this.selectedCity && this.editInvoiceData) {
+        const index = this.citiesOptions.findIndex((city: any) => city.label === this.selectedCity);
+        if (index !== -1) {
+          const [movedObject] = this.citiesOptions.splice(index, 1); // Remove the element from its current position
+          this.citiesOptions.unshift(movedObject); // Add it to the beginning of the array
+        }
+      }
     } else {
       this.citiesOptions = [];
     }
@@ -135,14 +147,13 @@ export class InvoiceConfigComponent implements OnChanges {
   }
 
   modelChanged(value, key) {
-    if (key === 'clientId') {
-      this.invoices[key] = value?.clientId;
-    } else if (key === 'supplyDate') {
+    if (key === 'supplyDate') {
       const date = typeof value === 'string' ? DateTime.fromFormat(value, 'dd/MM/yyyy') : DateTime.fromJSDate(new Date(value));
       this.invoices[key] = date.toFormat("dd/MM/yyyy");
     } else {
       this.invoices[key] = value;
     }
+    this.formData();
   }
 
   onProductSelect(evt, index) {
@@ -203,8 +214,7 @@ export class InvoiceConfigComponent implements OnChanges {
       item['code'] = item['code']?.code
     });
     let isValid = this.itemsForm.status === 'VALID' && (this.invoices.clientId && this.invoices.invoiceNumber);
-    console.log(this.itemsForm.status === 'VALID', this.invoices.clientId, this.invoices.invoiceNumber)
-    this.sendFormData.emit({ data: this.invoices, status: isValid });
+    this.sendFormData.emit({ data: { ...this.invoices, clientId: this.invoices['clientId']?.clientId }, status: isValid });
   }
 
   decimalNumberToWord(num: any) {
@@ -226,15 +236,16 @@ export class InvoiceConfigComponent implements OnChanges {
   async setupForm() {
     try {
       let invoiceDetail = await this.invoiceService.getInvoice(this.editInvoiceData?.data.invoiceId);
-      this.invoices['clientId'] = { label: invoiceDetail?.data['client']['companyName'], value: invoiceDetail?.data['client'] };
+      this.invoices['clientId'] = this.clients.find(client => client.label === invoiceDetail?.data['client']['companyName'])?.value;
+      this.invoices['state'] = invoiceDetail?.data['state'];
+      this.selectedCity = invoiceDetail?.data['city'];
+      this.selectState({ label: this.invoices['state'], value: this.invoices['state'] });
+      this.invoices['city'] = invoiceDetail?.data['city'];
       this.invoices['invoiceNumber'] = invoiceDetail?.data['invoiceNumber'];
       this.invoices['supplyDate'] = invoiceDetail?.data['supplyDate'];
       this.invoices['gstNumber'] = invoiceDetail?.data['gstNumber'];
       this.invoices['transportMode'] = invoiceDetail?.data['transportMode'];
       this.invoices['contact'] = invoiceDetail?.data['contact'];
-      this.invoices['state'] = invoiceDetail?.data['state'];
-      this.selectState({ value: this.invoices['state'] });
-      this.invoices['city'] = invoiceDetail?.data['city'];
       this.invoices['address'] = invoiceDetail?.data['address'];
       this.amountInWords = invoiceDetail?.data['amountInWords'];
       this.cgstPer = invoiceDetail?.data['cgstPercent'];
@@ -248,9 +259,7 @@ export class InvoiceConfigComponent implements OnChanges {
             this.itemsForm.get("invoiceItems")['controls'][index]['controls'][key].setValue(item[key]);
           } else if (key === 'code') {
             let productValue = this.products.find(product => product.label === item[key]);
-            this.itemsForm.get("invoiceItems")['controls'][index]['controls'][key].setValue({ label: item[key], value: productValue });
-            this.itemsForm.get("invoiceItems")['controls'][index]['controls'][key].updateValueAndValidity()
-            console.log(this.itemsForm.get("invoiceItems")['controls'][index]['controls'][key], key)
+            this.itemsForm.get("invoiceItems")['controls'][index]['controls'][key].setValue(productValue.value);
           }
         });
         if (index < invoiceDetail?.data?.invoiceItems?.length - 1) {

@@ -18,6 +18,7 @@
     [maximizable]="true"
 >
     <app-invoice-config
+        *ngIf="isInvoiceDialogOpen"
         (sendFormData)="formData($event)"
         [editInvoiceData]="editProductDetails"
     ></app-invoice-config>

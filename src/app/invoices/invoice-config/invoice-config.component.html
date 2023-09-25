@@ -7,9 +7,8 @@
                 <p-dropdown
                     [options]="clients"
                     [filter]="true"
-                    [(ngModel)]="invoices.clientId"
+                    [(ngModel)]="invoices['clientId']"
                     appendTo="body"
-                    (ngModelChange)="modelChanged($event, 'clientId')"
                 ></p-dropdown>
             </div>
             <div class="col-12 md:col-6">
@@ -59,7 +58,7 @@
                 />
             </div>
             <div class="col-12 md:col-6">
-                <label htmlFor="city">Contact</label>
+                <label htmlFor="contact">Contact</label>
                 <input
                     pInputText
                     id="contact"
@@ -71,7 +70,7 @@
         </div>
         <div class="p-fluid p-formgrid grid">
             <div class="col-12 md:col-6">
-                <label htmlFor="city">State</label>
+                <label htmlFor="state">State</label>
                 <p-dropdown
                     [options]="statesOptions"
                     (onChange)="selectState($event)"
@@ -82,7 +81,7 @@
                 ></p-dropdown>
             </div>
             <div class="col-12 md:col-6">
-                <label htmlFor="state">City</label>
+                <label htmlFor="city">City</label>
                 <p-dropdown
                     [options]="citiesOptions"
                     [(ngModel)]="invoices.city"
@@ -140,6 +139,7 @@
                             pInputText
                             type="text"
                             formControlName="description"
+                            (input)="onFormValueChange(i)"
                         />
                     </div>
                     <div class="col-2">
@@ -151,6 +151,7 @@
                             type="text"
                             formControlName="quantity"
                             (input)="calculateAmount($event.target.value, i)"
+                            (input)="onFormValueChange(i)"
                         />
                     </div>
                     <div class="col-2">
@@ -158,6 +159,7 @@
                             pInputText
                             type="text"
                             formControlName="hsnCode"
+                            (input)="onFormValueChange(i)"
                         />
                     </div>
                     <div class="col-2">
@@ -165,6 +167,8 @@
                             pInputText
                             type="text"
                             formControlName="amount"
+                            readonly="true"
+                            (input)="onFormValueChange(i)"
                         />
                     </div>
                     <div class="col-1">
