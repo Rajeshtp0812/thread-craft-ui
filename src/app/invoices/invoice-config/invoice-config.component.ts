@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, S
 import { CountryStateCityService } from '../../common/service/country-state-city.service';
 import { ClientService } from '../../clients/client.service';
 import { MessageService } from 'primeng/api';
-import { FormArray, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ProductService } from '../../products/product.service';
 import * as converter from 'number-to-words';
 import { DateTime } from 'luxon';
@@ -68,12 +68,12 @@ export class InvoiceConfigComponent implements OnChanges {
     });
     this.statesOptions = this.stateCityService.getStatesByCountry('IN');
     this.statesOptions.unshift(this.select);
+    this.fetchClient();
+    this.fetchProducts()
   }
 
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes['editInvoiceData'].currentValue?.data) {
-      await this.fetchClient();
-      await this.fetchProducts()
       await this.setupForm();
     }
   }
@@ -105,6 +105,26 @@ export class InvoiceConfigComponent implements OnChanges {
     }
   }
 
+  onClientSelect() {
+    if (this.invoices['clientId']) {
+      this.invoices.gstNumber = this.invoices['clientId'].gst;
+      this.invoices.contact = this.invoices['clientId'].contact;
+      this.invoices.state = this.invoices['clientId'].state;
+      this.selectedCity = this.invoices['clientId'].city;
+      this.selectState({ label: this.invoices['state'], value: this.invoices['state'] });
+      this.invoices.city = this.invoices['clientId'].city;
+      this.invoices.address = this.invoices['clientId'].address;
+    } else {
+      this.invoices.gstNumber = '';
+      this.invoices.contact = '';
+      this.invoices.state = '';
+      this.selectedCity = '';
+      this.invoices.city = '';
+      this.citiesOptions = [];
+      this.invoices.address = '';
+    }
+  }
+
   selectState(event: any) {
     this.selectedState = '';
     if (event.value !== this.select) {
@@ -128,22 +148,24 @@ export class InvoiceConfigComponent implements OnChanges {
 
   newItems(): FormGroup {
     return this.fb.group({
-      code: new FormControl(''),
+      code: new FormControl('', [Validators.required]),
       description: new FormControl(),
-      hsnCode: new FormControl(),
-      rate: new FormControl(),
-      quantity: new FormControl(),
+      hsnCode: new FormControl('', [Validators.required]),
+      rate: new FormControl('', [Validators.required]),
+      quantity: new FormControl('', [Validators.required]),
       amount: new FormControl(),
     })
   }
 
   addRow() {
     this.items.push(this.newItems());
+    this.formData();
   }
 
   deleteRow(index: number) {
     this.items.removeAt(index);
     this.calculateTotalAmount();
+    this.formData();
   }
 
   modelChanged(value, key) {
@@ -203,11 +225,11 @@ export class InvoiceConfigComponent implements OnChanges {
 
   formData() {
     this.invoices['amountInWords'] = this.amountInWords;
-    this.invoices['cgstPercent'] = this.cgstPer;
-    this.invoices['cgstAmount'] = this.cgstAmount;
-    this.invoices['sgstPercent'] = this.sgstPer;
-    this.invoices['sgstAmount'] = this.sgstAmount;
-    this.invoices['totalAmount'] = this.totalAmount;
+    this.invoices['cgstPercent'] = Number(this.cgstPer);
+    this.invoices['cgstAmount'] = Number(this.cgstAmount);
+    this.invoices['sgstPercent'] = Number(this.sgstPer);
+    this.invoices['sgstAmount'] = Number(this.sgstAmount);
+    this.invoices['totalAmount'] = Number(this.totalAmount);
     let items = this.itemsForm.getRawValue()?.invoiceItems;
     this.invoices['invoiceItems'] = items;
     this.invoices.invoiceItems?.forEach(item => {
@@ -260,6 +282,7 @@ export class InvoiceConfigComponent implements OnChanges {
           } else if (key === 'code') {
             let productValue = this.products.find(product => product.label === item[key]);
             this.itemsForm.get("invoiceItems")['controls'][index]['controls'][key].setValue(productValue.value);
+            this.itemsForm.updateValueAndValidity()
           }
         });
         if (index < invoiceDetail?.data?.invoiceItems?.length - 1) {

@@ -9,6 +9,7 @@
                     [filter]="true"
                     [(ngModel)]="invoices['clientId']"
                     appendTo="body"
+                    (ngModelChange)="onClientSelect()"
                 ></p-dropdown>
             </div>
             <div class="col-12 md:col-6">

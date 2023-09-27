@@ -45,10 +45,10 @@ export class ClientsMainComponent {
     try {
       if (this.selectedModal === MODAL_TYPE.ADD) {
         await this.clientService.createClient(this.formData);
-        this.messageService.add({ severity: 'success', summary: 'Company created successfully', detail: '' });
+        this.messageService.add({ severity: 'success', summary: 'Client added successfully', detail: '' });
       } else if (this.selectedModal === MODAL_TYPE.EDIT) {
         await this.clientService.updateClient(this.editClientDetail.clientId, this.formData);
-        this.messageService.add({ severity: 'success', summary: 'Company updated succesfully', detail: '' });
+        this.messageService.add({ severity: 'success', summary: 'Client updated succesfully', detail: '' });
       }
       this.closeForm();
       this.clientService.refetchData.next(true);

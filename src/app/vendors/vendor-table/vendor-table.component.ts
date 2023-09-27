@@ -15,7 +15,6 @@ export class VendorTableComponent {
   cols = [
     { field: 'ownerName', header: 'Owner' },
     { field: 'companyName', header: 'Company' },
-    { field: 'email', header: 'Email' },
     { field: 'contact', header: 'Contact' },
     { field: 'state', header: 'State' },
     { field: 'city', header: 'City' },
