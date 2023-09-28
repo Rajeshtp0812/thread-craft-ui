@@ -25,7 +25,6 @@ export class ClientsTableComponent {
   contextMenus: any[];
   @Output() openCompaniesForm = new EventEmitter();
   filterFields = [];
-
   @ViewChild('cm') contextMenu: ContextMenu
 
 
@@ -91,5 +90,4 @@ export class ClientsTableComponent {
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
   }
-
 }

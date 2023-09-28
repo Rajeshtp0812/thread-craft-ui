@@ -17,7 +17,8 @@ export class AuthInterceptor implements HttpInterceptor {
     constructor(private tokenStorageService: TokenStorageService,
         private router: Router) { }
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        if ((req.url === environment.companyURL && req.method === 'GET') || req.url.includes('login')) {
+        if ((req.url === environment.companyURL && req.method === 'GET') || req.url.includes('login')
+            || req.url.includes('forgot-password')) {
             return next.handle(req);
         }
         let authReq = req;

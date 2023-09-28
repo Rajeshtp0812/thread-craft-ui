@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
 import { environment } from 'src/environments/environment';
 const AUTH_API = environment.authServiceURL;
 
@@ -24,5 +24,13 @@ export class AuthService {
 
     refreshToken(refreshToken: any) {
         return this.http.post(AUTH_API + 'refresh/', refreshToken, httpOptions);
+    }
+
+    forgotPassword(email) {
+        return lastValueFrom(this.http.post(AUTH_API + `forgot-password/?email=${email}`, httpOptions));
+    }
+
+    changePassword(data) {
+        return lastValueFrom(this.http.post(AUTH_API + `update-password/`, data, httpOptions));
     }
 }

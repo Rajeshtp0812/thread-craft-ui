@@ -21,6 +21,7 @@ import { ContextMenuModule } from 'primeng/contextmenu';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
+import { PasswordModule } from 'primeng/password';
 
 @NgModule({
     declarations: [
@@ -47,7 +48,8 @@ import { DropdownModule } from 'primeng/dropdown';
         ContextMenuModule,
         DialogModule,
         ButtonModule,
-        DropdownModule
+        DropdownModule,
+        PasswordModule
     ],
     exports: [AppLayoutComponent]
 })

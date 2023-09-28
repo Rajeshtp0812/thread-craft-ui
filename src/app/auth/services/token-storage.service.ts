@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import jwt_decode from 'jwt-decode';
 
 const ACCESS_TOKEN = 'auth-token';
@@ -10,10 +11,12 @@ const REFRESH_TOKEN = 'refresh-token';
 export class TokenStorageService {
     refreshed = false;
 
-    constructor() { }
+    constructor(private readonly router: Router,
+    ) { }
 
     signOut(): void {
         window.sessionStorage.clear();
+        this.router.navigate(['/']);
     }
 
     public saveAccessToken(token: string): void {

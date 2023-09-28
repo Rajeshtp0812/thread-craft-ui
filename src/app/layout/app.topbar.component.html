@@ -50,11 +50,28 @@
     [closable]="false"
 >
     <p-dropdown
+        *ngIf="!isPasswordChangeDialog"
         [options]="companyOptions"
         (onChange)="selectCompany($event)"
         optionLabel="label"
         appendTo="body"
     ></p-dropdown>
+
+    <ng-container *ngIf="isPasswordChangeDialog">
+        <label for="password1" class="block text-900 font-medium text-xl mb-2"
+            >New Password</label
+        >
+        <p-password
+            id="password"
+            [(ngModel)]="password"
+            placeholder="Password"
+            [toggleMask]="true"
+            styleClass="mb-5"
+            inputStyleClass="w-full p-3 md:w-30rem"
+            autoWidth="false"
+            [style]="{ width: '100%' }"
+        ></p-password>
+    </ng-container>
 
     <ng-template pTemplate="footer">
         <button
@@ -71,8 +88,10 @@
             type="button"
             label="Submit"
             class="p-button-raised"
-            [disabled]="!isValid"
-            (click)="switchCompany()"
+            [disabled]="
+                !isPasswordChangeDialog ? !isValid : password.length === 0
+            "
+            (click)="submit()"
         ></button>
     </ng-template>
 </p-dialog>

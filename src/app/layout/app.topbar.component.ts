@@ -6,6 +6,7 @@ import { TokenStorageService } from '../auth/services/token-storage.service';
 import { Router } from '@angular/router';
 import { COMPANY } from '../common/constants';
 import { CompaniesService } from '../companies/companies.service';
+import { AuthService } from '../auth/services/auth.service';
 
 @Component({
     selector: 'app-topbar',
@@ -14,24 +15,22 @@ import { CompaniesService } from '../companies/companies.service';
 export class AppTopBarComponent implements OnInit {
 
     items!: MenuItem[];
-
     @ViewChild('menubutton') menuButton!: ElementRef;
-
     @ViewChild('topbarmenubutton') topbarMenuButton!: ElementRef;
-
     @ViewChild('topbarmenu') menu!: ElementRef;
-
     @ViewChild('cm') contextMenu: ContextMenu;
-
     companyName = '';
     companyOptions = [];
     isValid = false;
     selectedCompany = null;
+    isPasswordChangeDialog = false;
+    password = '';
 
 
     isSwitchCompanyFormOpen = false;
     contextMenuItems = [
         { label: 'Switch company', command: () => this.openDialog() },
+        { label: 'Change password', command: () => this.openDialog(true) },
         { label: 'Logout', command: () => this.logout() }
     ];
 
@@ -39,7 +38,8 @@ export class AppTopBarComponent implements OnInit {
         private readonly tokenStorageService: TokenStorageService,
         private readonly router: Router,
         private readonly companyService: CompaniesService,
-        public messageService: MessageService) {
+        public messageService: MessageService,
+        private readonly authService: AuthService) {
         this.companyName = JSON.parse(localStorage.getItem(COMPANY))?.companyName;
         this.companyService.changedCompanyLabel.subscribe(() =>
             this.companyName = JSON.parse(localStorage.getItem(COMPANY))?.companyName);
@@ -70,14 +70,24 @@ export class AppTopBarComponent implements OnInit {
         }
     }
 
-    switchCompany() {
-        localStorage.setItem(COMPANY, JSON.stringify(structuredClone(this.selectedCompany)));
-        this.layoutService.swicthCompany.next(true);
-        this.companyService.changedCompanyLabel.next(true);
-        this.selectedCompany = null;
-        this.companyOptions = [];
-        this.isSwitchCompanyFormOpen = false;
-        this.router.navigate(['/main']);
+    async submit() {
+        if (!this.isPasswordChangeDialog) {
+            localStorage.setItem(COMPANY, JSON.stringify(structuredClone(this.selectedCompany)));
+            this.layoutService.swicthCompany.next(true);
+            this.companyService.changedCompanyLabel.next(true);
+            this.selectedCompany = null;
+            this.companyOptions = [];
+            this.isSwitchCompanyFormOpen = false;
+            this.router.navigate(['/main']);
+        } else {
+            try {
+                await this.authService.changePassword({ password: this.password });
+                this.messageService.add({ severity: 'success', summary: 'Your password has been changed', detail: '' });
+                setTimeout(() => this.logout(), 2000);
+            } catch (err) {
+                this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
+            }
+        }
     }
 
     showContextMenu(event: MouseEvent) {
@@ -85,9 +95,12 @@ export class AppTopBarComponent implements OnInit {
         this.contextMenu.show(event);
     }
 
-    async openDialog() {
+    async openDialog(isPasswordChange = false) {
         this.isSwitchCompanyFormOpen = true;
-        await this.fetchCompanies()
+        this.isPasswordChangeDialog = isPasswordChange;
+        if (!isPasswordChange) {
+            await this.fetchCompanies()
+        }
     }
 
     cancel() {
@@ -96,8 +109,6 @@ export class AppTopBarComponent implements OnInit {
 
     logout() {
         this.tokenStorageService.signOut();
-        this.router.navigate(['/']);
     }
-
 
 }

@@ -30,11 +30,11 @@
                     <label
                         for="username"
                         class="block text-900 text-xl font-medium mb-2"
-                        >Username</label
+                        >Email</label
                     >
                     <input
                         id="username"
-                        type="text"
+                        type="email"
                         [(ngModel)]="username"
                         placeholder="Username"
                         pInputText
@@ -74,16 +74,17 @@
                         ></p-dropdown>
                     </span>
 
-                    <!-- <div
+                    <div
                         class="flex align-items-center justify-content-between mb-5 gap-5"
                     >
                         <div class="flex align-items-center"></div>
                         <a
                             class="font-medium no-underline ml-2 text-right cursor-pointer"
                             style="color: var(--primary-color)"
+                            [routerLink]="'forgot-password'"
                             >Forgot password?</a
                         >
-                    </div> -->
+                    </div>
                     <button
                         pButton
                         pRipple

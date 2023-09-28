@@ -59,7 +59,7 @@ export class DashboardComponent implements OnInit {
             this.card[3].count = product;
             this.card[4].count = invoice;
         } catch (err) {
-            this.messageService.add({ severity: 'error', summary: 'Unexpected system error while generating invoice', detail: err });
+            this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
         }
     }
 }

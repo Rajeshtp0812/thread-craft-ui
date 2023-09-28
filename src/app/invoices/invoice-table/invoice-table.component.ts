@@ -274,7 +274,7 @@ export class InvoiceTableComponent {
         }
       };
     } catch (err) {
-      this.messageService.add({ severity: 'error', summary: 'Unexpected system error while generating invoice', detail: err });
+      this.messageService.add({ severity: 'error', summary: 'Unexpected system error while generating invoice', detail: '' });
       return null;
     }
 
