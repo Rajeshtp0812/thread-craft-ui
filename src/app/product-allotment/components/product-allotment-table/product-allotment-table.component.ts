@@ -24,7 +24,7 @@ export class ProductAllotmentTableComponent {
   data = [];
   contextMenus: any[];
   @Output() openAllottmentForm = new EventEmitter();
-  filterFields = [];
+  filterFields = this.cols.map(col => col.field);
 
   @ViewChild('cm') contextMenu: ContextMenu
 

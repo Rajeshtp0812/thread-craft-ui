@@ -48,6 +48,7 @@ export class InvoiceConfigComponent implements OnChanges {
   amountInWords: string = '';
 
   @Input() editInvoiceData = null;
+  filteredProducts: any[];
   @Input() set clearForm(value) {
     if (!value) {
       this.invoices = { invoiceItems: [] };
@@ -85,8 +86,7 @@ export class InvoiceConfigComponent implements OnChanges {
   async fetchProducts() {
     try {
       let res = await this.productService.getProducts();
-      this.products = res?.data?.map(product => ({ label: product.code, value: product }));
-      this.products.unshift({ label: 'Select', value: '' });
+      this.products = res?.data;
     } catch (err) {
       this.messageService.add({ severity: "error", summary: "Unexpected error occured" });
     }
@@ -178,11 +178,12 @@ export class InvoiceConfigComponent implements OnChanges {
     this.formData();
   }
 
-  onProductSelect(evt, index) {
+  onProductSelect(index) {
     let formCtrl = this.items?.controls[index];
-    if (evt.value) {
-      formCtrl['controls'].description.setValue(evt.value.details);
-      formCtrl['controls'].rate.setValue(evt.value.rate);
+    let product: any = this.products.filter(product => product?.code === formCtrl['controls']?.code?.value);
+    if (product) {
+      formCtrl['controls'].description.setValue(product[0]?.details);
+      formCtrl['controls'].rate.setValue(product[0]?.rate);
     }
   }
 
@@ -232,9 +233,6 @@ export class InvoiceConfigComponent implements OnChanges {
     this.invoices['totalAmount'] = Number(this.totalAmount);
     let items = this.itemsForm.getRawValue()?.invoiceItems;
     this.invoices['invoiceItems'] = items;
-    this.invoices.invoiceItems?.forEach(item => {
-      item['code'] = item['code']?.code
-    });
     let isValid = this.itemsForm.status === 'VALID' && (this.invoices.clientId && this.invoices.invoiceNumber);
     this.sendFormData.emit({ data: { ...this.invoices, clientId: this.invoices['clientId']?.clientId }, status: isValid });
   }
@@ -277,13 +275,10 @@ export class InvoiceConfigComponent implements OnChanges {
       this.totalAmount = invoiceDetail?.data['totalAmount'];
       invoiceDetail?.data?.invoiceItems?.forEach((item, index) => {
         Object.keys(item).forEach(key => {
-          if (key !== 'invoiceItemId' && key !== 'code') {
+          if (key !== 'invoiceItemId') {
             this.itemsForm.get("invoiceItems")['controls'][index]['controls'][key].setValue(item[key]);
-          } else if (key === 'code') {
-            let productValue = this.products.find(product => product.label === item[key]);
-            this.itemsForm.get("invoiceItems")['controls'][index]['controls'][key].setValue(productValue.value);
-            this.itemsForm.updateValueAndValidity()
           }
+          this.itemsForm.updateValueAndValidity()
         });
         if (index < invoiceDetail?.data?.invoiceItems?.length - 1) {
           this.addRow();
@@ -293,5 +288,18 @@ export class InvoiceConfigComponent implements OnChanges {
     } catch (err) {
 
     }
+  }
+
+  filterProduct(event) {
+    let filtered: any[] = [];
+    let query = event.query;
+    for (let i = 0; i < this.products.length; i++) {
+      let product = this.products[i];
+      if (product.code.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+        filtered.push(product.code);
+      }
+    }
+
+    this.filteredProducts = filtered;
   }
 }

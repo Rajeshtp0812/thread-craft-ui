@@ -24,7 +24,7 @@ export class InvoiceTableComponent {
   data = [];
   contextMenus: any[];
   @Output() openCompaniesForm = new EventEmitter();
-  filterFields = [];
+  filterFields = this.cols.map(col => col.field);
   printInvoiceDetails: any;
   @ViewChild('cm') contextMenu: ContextMenu
 

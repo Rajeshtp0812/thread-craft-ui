@@ -16,6 +16,8 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { TableModule } from 'primeng/table';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { CommonsModule } from '../common/commons.module';
+import { AutoCompleteModule } from 'primeng/autocomplete';
 
 
 @NgModule({
@@ -26,6 +28,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
   ],
   imports: [
     CommonModule,
+    CommonsModule,
     FormsModule,
     InvoicesRoutingModule,
     DialogModule,
@@ -39,7 +42,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
     TableModule,
     ContextMenuModule,
     InputNumberModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AutoCompleteModule
   ]
 })
 export class InvoicesModule { }

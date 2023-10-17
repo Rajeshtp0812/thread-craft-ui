@@ -107,6 +107,7 @@ export class CommonFormComponent implements OnInit, OnChanges {
 
   emitFormData() {
     let formControlValues = this.form.getRawValue();
+    formControlValues['companyName'] = formControlValues['companyName']?.toUpperCase();
     Object.keys(formControlValues).forEach(key => (formControlValues[key] = formControlValues[key] === null ? '' : formControlValues[key]));
     this.formData.emit({ data: formControlValues, status: this.form.status === 'VALID' });
   }

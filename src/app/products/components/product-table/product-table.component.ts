@@ -36,7 +36,7 @@ export class ProductTableComponent {
   data = [];
   contextMenus: any[];
   @Output() openProductForm = new EventEmitter();
-  filterFields = [];
+  filterFields = this.cols.map(col => col.field);
   @ViewChild('dt') dt: Table;
 
   @ViewChild('cm') contextMenu: ContextMenu

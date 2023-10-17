@@ -24,7 +24,7 @@ export class ClientsTableComponent {
   data = [];
   contextMenus: any[];
   @Output() openCompaniesForm = new EventEmitter();
-  filterFields = [];
+  filterFields = this.cols.map(col => col.field);
   @ViewChild('cm') contextMenu: ContextMenu
 
 
