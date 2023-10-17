@@ -184,6 +184,7 @@ export class InvoiceConfigComponent implements OnChanges {
     if (product) {
       formCtrl['controls'].description.setValue(product[0]?.details);
       formCtrl['controls'].rate.setValue(product[0]?.rate);
+      this.calculateAmount(formCtrl['controls']?.rate?.value, index);
     }
   }
 
