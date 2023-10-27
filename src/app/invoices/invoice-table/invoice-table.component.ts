@@ -152,7 +152,7 @@ export class InvoiceTableComponent {
             color: '#000'
           },
           {
-            text: 'Add: Room No. 3. FSM 10/3/CEN-95 SK 144, Babu seth Chawl, Sewri Koliwada (E), Mumbai - 400 015',
+            text: `Add: ${currentCompany.address?.toUpperCase()} ${currentCompany.city?.toUpperCase()} ${currentCompany.state?.toUpperCase()} - ${currentCompany.pinCode}`,
             fontSize: 9,
             alignment: 'center',
             color: '#000'

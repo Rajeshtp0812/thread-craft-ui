@@ -3,7 +3,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { DateTime } from 'luxon';
 
-const EXPRESSION_EVAL_FIELDS = ['average'];
+const EXPRESSION_EVAL_FIELDS = ['average', 'embroidary', 'fittingStich', 'buttonStich',
+  'print', 'pintex', 'kMaking', 'tag', 'label', 'making', 'canvas'];
 
 interface UploadEvent {
   originalEvent: Event;
@@ -21,6 +22,7 @@ export class ProductConfigComponent {
   form: FormGroup;
   evaluatedResults: { [key: string]: any } = {}; // Object to hold evaluated results
   @Output() formData = new EventEmitter();
+  totalAmount = 0;
   @Input() set editProductDetails(value) {
     if (value) {
       this.editPreviewImg = structuredClone(value?.image);
@@ -33,6 +35,7 @@ export class ProductConfigComponent {
       this.form.reset();
       this.uploadedFiles = [];
       this.evaluatedResults = {};
+      this.totalAmount = 0;
     }
   }
 
@@ -67,7 +70,12 @@ export class ProductConfigComponent {
     });
     EXPRESSION_EVAL_FIELDS.forEach(key => {
       this.form.controls[key].valueChanges.subscribe(() => {
-        this.evaluateExpression(key);
+        if (key === 'average') {
+          this.evaluateExpression(key);
+        }
+        if (this.form.get(key)?.value && this.form.get(key)?.value !== '') {
+          this.totalAmount += Number(Number(eval(this.form.get(key)?.value)).toFixed(2));
+        }
       });
     });
   }
@@ -78,6 +86,7 @@ export class ProductConfigComponent {
     Object.keys(products).forEach(key => (products[key] = products[key] === null ? '' : products[key]));
     const date = typeof products['date'] === 'string' ? DateTime.fromFormat(products['date'], 'dd/MM/yyyy') : DateTime.fromJSDate(new Date(products['date']));
     products['date'] = date.toFormat("dd/MM/yyyy");
+    products['totalAmount'] = this.totalAmount;
     Object.entries(products).forEach((product: any) => {
       formData.append(product[0], product[1]);
     });
@@ -109,7 +118,7 @@ export class ProductConfigComponent {
         this.evaluatedResults[controlName] = '';
         return;
       }
-      const result = eval(expression);
+      const result = Number(eval(expression)).toFixed(2);
       this.evaluatedResults[controlName] = `${expression} = ${result}`;
     } catch (error) {
       this.evaluatedResults[controlName] = 'Invalid expression';

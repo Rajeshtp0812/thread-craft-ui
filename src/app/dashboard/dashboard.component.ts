@@ -50,6 +50,11 @@ export class DashboardComponent implements OnInit {
     }
 
     async ngOnInit() {
+        this.loadDashboardData();
+        this.layoutService.swicthCompany.subscribe(() => this.loadDashboardData());
+    }
+
+    async loadDashboardData() {
         try {
             let response = await this.layoutService.getDashboardData();
             let { client, product, invoice, vendor, company } = response.data;

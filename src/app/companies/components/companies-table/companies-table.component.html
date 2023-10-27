@@ -3,7 +3,6 @@
     [value]="data"
     [columns]="cols"
     responsiveLayout="scroll"
-    [rows]="20"
     [globalFilterFields]="filterFields"
     [rowHover]="true"
     dataKey="id"
@@ -11,11 +10,12 @@
     [contextMenu]="cm"
     [reorderableColumns]="true"
     [loading]="isDataLoading"
-    [scrollable]="true"
     scrollDirection="horizontal"
-    scrollHeight="385px"
-    [virtualScroll]="true"
-    [virtualScrollItemSize]="40"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [paginator]="true"
+    [rows]="10"
+    [rowsPerPageOptions]="[10, 25, 50]"
 >
     <ng-template pTemplate="caption">
         <div

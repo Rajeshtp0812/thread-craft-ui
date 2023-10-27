@@ -13,9 +13,11 @@
     [loading]="isDataLoading"
     [scrollable]="true"
     scrollDirection="horizontal"
-    scrollHeight="380px"
-    [virtualScroll]="true"
-    [virtualScrollItemSize]="40"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [paginator]="true"
+    [rows]="10"
+    [rowsPerPageOptions]="[10, 25, 50]"
 >
     <ng-template pTemplate="caption">
         <div
