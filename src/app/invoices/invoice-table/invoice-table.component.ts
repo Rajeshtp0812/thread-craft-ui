@@ -128,6 +128,7 @@ export class InvoiceTableComponent {
         });
         subData.push(tempInvoiceDetails);
       });
+      console.log(this.printInvoiceDetails)
       return {
         content: [
           {
@@ -169,10 +170,10 @@ export class InvoiceTableComponent {
               [
                 { text: `GSTIN: ${currentCompany.gst}`, margin: [0, 15, 0, 2], decoration: 'underline', bold: true },
                 {
-                  text: this.printInvoiceDetails.client,
+                  text: `Name: ${this.printInvoiceDetails.client?.companyName}`,
                   bold: true
                 },
-                { text: `${this.printInvoiceDetails.address}`, margin: [0, 0, 5, 0] },
+                { text: `Add: ${this.printInvoiceDetails.address}`, margin: [0, 0, 5, 0] },
                 { text: `State: ${this.printInvoiceDetails.state}` },
                 { text: `Tel No: ${this.printInvoiceDetails.contact}` },
                 { text: `GST No: ${this.printInvoiceDetails.gstNumber}` }

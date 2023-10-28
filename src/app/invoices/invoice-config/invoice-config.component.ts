@@ -4,9 +4,9 @@ import { ClientService } from '../../clients/client.service';
 import { MessageService } from 'primeng/api';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ProductService } from '../../products/product.service';
-import * as converter from 'number-to-words';
 import { DateTime } from 'luxon';
 import { InvoiceService } from '../services/invoice.service';
+import { ToWords } from 'to-words';
 
 interface Invoice {
   clientId?: any,
@@ -52,10 +52,13 @@ export class InvoiceConfigComponent implements OnChanges {
   @Input() set clearForm(value) {
     if (!value) {
       this.invoices = { invoiceItems: [] };
+      this.totalAmount = 0
+      this.amountInWords = '';
       this.itemsForm.reset();
     }
   }
   @Output() sendFormData = new EventEmitter();
+  toWords = new ToWords();
 
   constructor(private readonly stateCityService: CountryStateCityService,
     private readonly clientService: ClientService,
@@ -217,11 +220,8 @@ export class InvoiceConfigComponent implements OnChanges {
     } else {
       this.sgstAmount = 0;
     }
-
     this.totalAmount = Number((totalAmountWoGst + this.cgstAmount + this.sgstAmount).toFixed(2));
-    let amountInWords = this.toCapitalize(converter.toWords(this.totalAmount));
-    let decimalPoint = this.decimalNumberToWord(this.totalAmount);
-    this.amountInWords = `${amountInWords} ${decimalPoint}`;
+    this.amountInWords = this.toWords.convert(this.totalAmount, { currency: true });
     this.formData();
   }
 
@@ -236,22 +236,6 @@ export class InvoiceConfigComponent implements OnChanges {
     this.invoices['invoiceItems'] = items;
     let isValid = this.itemsForm.status === 'VALID' && (this.invoices.clientId && this.invoices.invoiceNumber);
     this.sendFormData.emit({ data: { ...this.invoices, clientId: this.invoices['clientId']?.clientId }, status: isValid });
-  }
-
-  decimalNumberToWord(num: any) {
-    let fraction = num.toString().split('.')[1];
-    let numbers = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
-    let word = '';
-    if (fraction) {
-      for (let i = 0; i < fraction?.length; i++) {
-        word += ' ' + numbers[Number(fraction[i])]
-      }
-    }
-    return word ? `Point ${word}` : word;
-  }
-
-  toCapitalize(str: any) {
-    return str.replace(/(^\w|\s\w)(\S*)/g, (_: any, m1: any, m2: any) => m1.toUpperCase() + m2.toLowerCase())
   }
 
   async setupForm() {
