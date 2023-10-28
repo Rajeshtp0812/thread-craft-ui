@@ -1,16 +1,17 @@
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { ContextMenu } from 'primeng/contextmenu';
 import { Table } from 'primeng/table';
 import { MODAL_TYPE } from '../../../common/constants';
 import { ProductService } from '../../product.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-product-table',
   templateUrl: './product-table.component.html',
   styleUrls: ['./product-table.component.scss']
 })
-export class ProductTableComponent {
+export class ProductTableComponent implements OnInit, OnDestroy {
   isDataLoading = false;
   cols = [
     { field: 'details', header: 'Details' },
@@ -39,7 +40,8 @@ export class ProductTableComponent {
   filterFields = this.cols.map(col => col.field);
   @ViewChild('dt') dt: Table;
 
-  @ViewChild('cm') contextMenu: ContextMenu
+  @ViewChild('cm') contextMenu: ContextMenu;
+  refetchDataSubscrption: Subscription;
 
 
   constructor(public productService: ProductService,
@@ -47,7 +49,7 @@ export class ProductTableComponent {
 
   async ngOnInit() {
     this.fetchData();
-    this.productService.refetchData.subscribe(value => this.fetchData());
+    this.refetchDataSubscrption = this.productService.refetchData.subscribe(value => this.fetchData());
   }
 
   async fetchData() {
@@ -103,5 +105,11 @@ export class ProductTableComponent {
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
+
+  ngOnDestroy(): void {
+    if (this.refetchDataSubscrption) {
+      this.refetchDataSubscrption.unsubscribe();
+    }
   }
 }

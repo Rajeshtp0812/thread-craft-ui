@@ -1,16 +1,17 @@
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { Table } from 'primeng/table';
 import { MODAL_TYPE } from '../../common/constants';
 import { ContextMenu } from 'primeng/contextmenu';
 import { VendorService } from '../vendor.service';
 import { MessageService } from 'primeng/api';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-vendor-table',
   templateUrl: './vendor-table.component.html',
   styleUrls: ['./vendor-table.component.scss']
 })
-export class VendorTableComponent {
+export class VendorTableComponent implements OnInit, OnDestroy {
   isDataLoading = false;
   cols = [
     { field: 'ownerName', header: 'Owner' },
@@ -25,14 +26,15 @@ export class VendorTableComponent {
   contextMenus: any[];
   @Output() openCompaniesForm = new EventEmitter();
   filterFields = this.cols.map(col => col.field);
-  @ViewChild('cm') contextMenu: ContextMenu
+  @ViewChild('cm') contextMenu: ContextMenu;
+  refetchDataSubscrption: Subscription;
 
   constructor(private readonly vendorService: VendorService,
     private readonly messageService: MessageService) { }
 
   ngOnInit(): void {
     this.fetchData();
-    this.vendorService.refetchData.subscribe(value => this.fetchData());
+    this.refetchDataSubscrption = this.vendorService.refetchData.subscribe(value => this.fetchData());
   }
 
   async fetchData() {
@@ -88,6 +90,12 @@ export class VendorTableComponent {
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
+
+  ngOnDestroy(): void {
+    if (this.refetchDataSubscrption) {
+      this.refetchDataSubscrption.unsubscribe();
+    }
   }
 
 }

@@ -1,16 +1,17 @@
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild, OnDestroy } from '@angular/core';
 import { Table } from 'primeng/table';
 import { MODAL_TYPE } from '../../../common/constants';
 import { ContextMenu } from 'primeng/contextmenu';
 import { ClientService } from '../../client.service';
 import { MessageService } from 'primeng/api';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-clients-table',
   templateUrl: './clients-table.component.html',
   styleUrls: ['./clients-table.component.scss']
 })
-export class ClientsTableComponent {
+export class ClientsTableComponent implements OnInit, OnDestroy {
   isDataLoading = false;
   cols = [
     { field: 'companyName', header: 'Company' },
@@ -26,6 +27,7 @@ export class ClientsTableComponent {
   @Output() openCompaniesForm = new EventEmitter();
   filterFields = this.cols.map(col => col.field);
   @ViewChild('cm') contextMenu: ContextMenu
+  refetchDataSubscrption: Subscription;
 
 
   constructor(public clientService: ClientService,
@@ -33,7 +35,7 @@ export class ClientsTableComponent {
 
   async ngOnInit() {
     this.fetchData();
-    this.clientService.refetchData.subscribe(value => this.fetchData());
+    this.refetchDataSubscrption = this.clientService.refetchData.subscribe(value => this.fetchData());
   }
 
   async fetchData() {
@@ -89,5 +91,11 @@ export class ClientsTableComponent {
 
   onGlobalFilter(table: Table, event: Event) {
     table.filterGlobal((event.target as HTMLInputElement).value, 'contains');
+  }
+
+  ngOnDestroy(): void {
+    if (this.refetchDataSubscrption) {
+      this.refetchDataSubscrption.unsubscribe();
+    }
   }
 }

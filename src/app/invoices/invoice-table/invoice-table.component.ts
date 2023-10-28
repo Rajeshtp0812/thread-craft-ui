@@ -1,17 +1,18 @@
-import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Output, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { Table } from 'primeng/table';
 import { COMPANY, MODAL_TYPE } from '../../common/constants';
 import { ContextMenu } from 'primeng/contextmenu';
 import { PrintService } from '../services/print.service';
 import { MessageService } from 'primeng/api';
 import { InvoiceService } from '../services/invoice.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-invoice-table',
   templateUrl: './invoice-table.component.html',
   styleUrls: ['./invoice-table.component.scss']
 })
-export class InvoiceTableComponent {
+export class InvoiceTableComponent implements OnInit, OnDestroy {
   isDataLoading = false;
   cols = [
     { field: 'invoiceNumber', header: 'Invoice Number' },
@@ -26,7 +27,8 @@ export class InvoiceTableComponent {
   @Output() openCompaniesForm = new EventEmitter();
   filterFields = this.cols.map(col => col.field);
   printInvoiceDetails: any;
-  @ViewChild('cm') contextMenu: ContextMenu
+  @ViewChild('cm') contextMenu: ContextMenu;
+  refetchDataSubscrption: Subscription;
 
   constructor(private readonly printService: PrintService,
     private readonly messageService: MessageService,
@@ -35,7 +37,7 @@ export class InvoiceTableComponent {
 
   async ngOnInit() {
     this.fetchData();
-    this.invoiceService.refetchData.subscribe(() => this.fetchData());
+    this.refetchDataSubscrption = this.invoiceService.refetchData.subscribe(() => this.fetchData());
   }
 
   async fetchData() {
@@ -278,7 +280,12 @@ export class InvoiceTableComponent {
       this.messageService.add({ severity: 'error', summary: 'Unexpected system error while generating invoice', detail: '' });
       return null;
     }
+  }
 
+  ngOnDestroy(): void {
+    if (this.refetchDataSubscrption) {
+      this.refetchDataSubscrption.unsubscribe();
+    }
   }
 
 }

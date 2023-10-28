@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { Subscription } from 'rxjs';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 
 interface DashboardCard {
@@ -13,7 +14,7 @@ interface DashboardCard {
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
 
 
     card: DashboardCard[] = [
@@ -44,6 +45,8 @@ export class DashboardComponent implements OnInit {
         }
     ];
 
+    switchCompanySubscription: Subscription;
+
     constructor(public layoutService: LayoutService,
         private readonly messageService: MessageService) {
 
@@ -51,7 +54,7 @@ export class DashboardComponent implements OnInit {
 
     async ngOnInit() {
         this.loadDashboardData();
-        this.layoutService.swicthCompany.subscribe(() => this.loadDashboardData());
+        this.switchCompanySubscription = this.layoutService.swicthCompany.subscribe(() => this.loadDashboardData());
     }
 
     async loadDashboardData() {
@@ -65,6 +68,12 @@ export class DashboardComponent implements OnInit {
             this.card[4].count = invoice;
         } catch (err) {
             this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
+        }
+    }
+
+    ngOnDestroy(): void {
+        if (this.switchCompanySubscription) {
+            this.switchCompanySubscription.unsubscribe();
         }
     }
 }

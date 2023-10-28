@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { MenuItem, MessageService } from 'primeng/api';
 import { LayoutService } from "./service/app.layout.service";
 import { ContextMenu } from 'primeng/contextmenu';
@@ -7,12 +7,13 @@ import { Router } from '@angular/router';
 import { COMPANY } from '../common/constants';
 import { CompaniesService } from '../companies/companies.service';
 import { AuthService } from '../auth/services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-topbar',
     templateUrl: './app.topbar.component.html'
 })
-export class AppTopBarComponent implements OnInit {
+export class AppTopBarComponent implements OnInit, OnDestroy {
 
     items!: MenuItem[];
     @ViewChild('menubutton') menuButton!: ElementRef;
@@ -25,6 +26,7 @@ export class AppTopBarComponent implements OnInit {
     selectedCompany = null;
     isPasswordChangeDialog = false;
     password = '';
+    changedLabelsubscription: Subscription;
 
 
     isSwitchCompanyFormOpen = false;
@@ -41,7 +43,7 @@ export class AppTopBarComponent implements OnInit {
         public messageService: MessageService,
         private readonly authService: AuthService) {
         this.companyName = JSON.parse(localStorage.getItem(COMPANY))?.companyName;
-        this.companyService.changedCompanyLabel.subscribe(() =>
+        this.changedLabelsubscription = this.companyService.changedCompanyLabel.subscribe(() =>
             this.companyName = JSON.parse(localStorage.getItem(COMPANY))?.companyName);
     }
 
@@ -109,6 +111,12 @@ export class AppTopBarComponent implements OnInit {
 
     logout() {
         this.tokenStorageService.signOut();
+    }
+
+    ngOnDestroy(): void {
+        if (this.changedLabelsubscription) {
+            this.changedLabelsubscription.unsubscribe()
+        }
     }
 
 }
