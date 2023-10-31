@@ -29,7 +29,6 @@ export class ClientsTableComponent implements OnInit, OnDestroy {
   @ViewChild('cm') contextMenu: ContextMenu
   refetchDataSubscrption: Subscription;
 
-
   constructor(public clientService: ClientService,
     private readonly messageService: MessageService) { }
 

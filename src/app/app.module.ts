@@ -3,11 +3,6 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppLayoutModule } from './layout/app.layout.module';
-import { CustomerService } from './common/service/customer.service';
-import { EventService } from './common/service/event.service';
-import { IconService } from './common/service/icon.service';
-import { NodeService } from './common/service/node.service';
-import { PhotoService } from './common/service/photo.service';
 import { TokenStorageService } from './auth/services/token-storage.service';
 import { USER_PREFERENCES } from './common/constants';
 import { CommonUtilsService, USER_PREFERENCE } from './common/service/common-utils.service';
@@ -51,7 +46,7 @@ export function initApp(
         },
         { provide: LocationStrategy, useClass: HashLocationStrategy },
         { provide: APP_INITIALIZER, useFactory: initApp, multi: true, deps: [LayoutService, CommonUtilsService] },
-        CustomerService, EventService, IconService, NodeService, PhotoService, TokenStorageService, MessageService
+        TokenStorageService, MessageService
     ],
     bootstrap: [AppComponent]
 })

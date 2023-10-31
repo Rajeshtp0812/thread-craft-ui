@@ -168,12 +168,19 @@ export class InvoiceTableComponent implements OnInit, OnDestroy {
             color: '#000',
           },
           {
+            text: `GSTIN: ${currentCompany.gst}`,
+            fontSize: 9,
+            bold: true,
+            alignment: 'center',
+            color: '#000',
+          },
+          {
+            margin: [0, 10, 0, 0],
             columns: [
               [
-                { text: `GSTIN: ${currentCompany.gst}`, margin: [0, 15, 0, 2], decoration: 'underline', bold: true },
                 {
                   text: `Name: ${this.printInvoiceDetails.client?.companyName}`,
-                  bold: true
+                  bold: true,
                 },
                 { text: `Add: ${this.printInvoiceDetails.address}`, margin: [0, 0, 5, 0] },
                 { text: `State: ${this.printInvoiceDetails.state}` },
@@ -182,11 +189,10 @@ export class InvoiceTableComponent implements OnInit, OnDestroy {
               ],
               [
                 {
-                  text: `Tax is Payable On Reverse Change: `,
+                  text: `Tax is Payable On Reverse Change`,
                   alignment: 'left',
-                  margin: [0, 15, 0, 2],
                   decoration: 'underline',
-                  bold: true
+                  bold: true,
                 },
                 {
                   text: `Invoice No : ${this.printInvoiceDetails.invoiceNumber}`,
@@ -198,6 +204,10 @@ export class InvoiceTableComponent implements OnInit, OnDestroy {
                 },
                 {
                   text: `Date & Time of Supply: ${this.printInvoiceDetails.supplyDate}`,
+                  alignment: 'left'
+                },
+                {
+                  text: '',
                   alignment: 'left'
                 }
               ],
@@ -212,9 +222,11 @@ export class InvoiceTableComponent implements OnInit, OnDestroy {
                 ['Sr No', 'Design No', 'Description', 'HSN Code', 'Quantity', 'Rate', 'Amount'],
                 ...this.printInvoiceDetails?.invoiceItems?.map((inv: any, index: number) =>
                   ([index + 1, inv.code, inv.description, inv.hsnCode, inv.quantity, inv.rate, inv.amount])),
-                [{ text: `Rupees in words: ${this.printInvoiceDetails.amountInWords}`, colSpan: 3, rowSpan: 2 }, {}, {}, { text: `CGST: ${this.printInvoiceDetails.cgstPercent} %`, bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails.cgstAmount, colSpan: 2, alignment: 'center' }, {}],
-                [{}, {}, {}, { text: `SGST: ${this.printInvoiceDetails.sgstPercent} %`, bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails.sgstAmount, colSpan: 2, alignment: 'center' }, {}],
-                [{}, {}, {}, { text: 'Total Amount', bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails.totalAmount, bold: true, colSpan: 2, alignment: 'center' }, {}],
+                [{ text: `Rupees in words: ${this.printInvoiceDetails.amountInWords}`, colSpan: 3, rowSpan: 4 },
+                {}, {}, { text: `Total Amount`, colSpan: 2 }, {}, { text: this.printInvoiceDetails.totalAmount, colSpan: 2, alignment: 'center' }, {}],
+                [{}, {}, {}, { text: `CGST: ${this.printInvoiceDetails.cgstPercent} %`, colSpan: 2 }, {}, { text: this.printInvoiceDetails.cgstAmount, colSpan: 2, alignment: 'center' }, {}],
+                [{}, {}, {}, { text: `SGST: ${this.printInvoiceDetails.sgstPercent} %`, colSpan: 2 }, {}, { text: this.printInvoiceDetails.sgstAmount, colSpan: 2, alignment: 'center' }, {}],
+                [{}, {}, {}, { text: 'Gross Amount', bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails.totalAmount, bold: true, colSpan: 2, alignment: 'center' }, {}],
               ]
             }
           },

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { MessageService } from 'primeng/api';
-import { ClientService } from '../../../clients/client.service';
 import { MODAL_TYPE } from '../../../common/constants';
 import { ProductService } from '../../product.service';
 

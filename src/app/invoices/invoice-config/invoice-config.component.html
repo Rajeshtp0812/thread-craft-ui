@@ -188,6 +188,14 @@
 
         <div class="p-fluid p-formgrid grid">
             <div class="col"></div>
+            <div class="col-2">Total Amount</div>
+            <div class="col-1"></div>
+            <div class="col-2">{{ totalAmount }}</div>
+            <div class="col-1"></div>
+        </div>
+
+        <div class="p-fluid p-formgrid grid">
+            <div class="col"></div>
             <div class="col-1">CGST</div>
             <div class="col-2">
                 <p-inputNumber
@@ -226,7 +234,9 @@
         </div>
         <div class="p-fluid p-formgrid grid">
             <div class="col">{{ amountInWords }}</div>
-            <div class="col-2">{{ totalAmount }}</div>
+            <div class="col-2">Gross Total Amount</div>
+            <div class="col-1"></div>
+            <div class="col-2">{{ grossAmount }}</div>
             <div class="col-1"></div>
         </div>
     </p-accordionTab>

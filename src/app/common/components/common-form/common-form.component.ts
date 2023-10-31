@@ -43,7 +43,6 @@ export class CommonFormComponent implements OnInit, OnChanges {
       this.citiesOptions = [];
     }
   }
-
   @Input() updateFormData;
 
   constructor(private readonly stateCityService: CountryStateCityService) {
@@ -96,7 +95,6 @@ export class CommonFormComponent implements OnInit, OnChanges {
       formCtrl['contact'].addValidators(Validators.required)
     } else if (this.wrapperComponentName === WRAPPER_COMPONENT.VENDOR) {
       this.form.removeControl('email');
-      this.form.removeControl('gst');
       this.form.addControl('alternateContact', new FormControl());
       this.form.updateValueAndValidity();
     }

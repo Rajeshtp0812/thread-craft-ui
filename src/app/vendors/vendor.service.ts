@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { Subject, lastValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-
 const URL = environment.vendorURL;
 
 const httpOptions = {

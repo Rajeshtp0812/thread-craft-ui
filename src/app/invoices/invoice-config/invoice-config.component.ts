@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CountryStateCityService } from '../../common/service/country-state-city.service';
 import { ClientService } from '../../clients/client.service';
 import { MessageService } from 'primeng/api';
@@ -40,20 +40,26 @@ export class InvoiceConfigComponent implements OnChanges {
   isFormValid = false;
   itemsForm: FormGroup;
   invoices: Invoice = { invoiceItems: [] };
-  totalAmount = 0;
+  grossAmount = 0;
   cgstPer = 0;
   sgstPer = 0;
   cgstAmount = 0;
   sgstAmount = 0;
   amountInWords: string = '';
+  totalAmount = 0;
 
   @Input() editInvoiceData = null;
   filteredProducts: any[];
   @Input() set clearForm(value) {
     if (!value) {
       this.invoices = { invoiceItems: [] };
-      this.totalAmount = 0
+      this.grossAmount = 0;
+      this.totalAmount = 0;
       this.amountInWords = '';
+      this.cgstPer = 0;
+      this.sgstPer = 0;
+      this.cgstAmount = 0;
+      this.sgstAmount = 0;
       this.itemsForm.reset();
     }
   }
@@ -65,8 +71,7 @@ export class InvoiceConfigComponent implements OnChanges {
     private readonly messageService: MessageService,
     private fb: FormBuilder,
     private readonly productService: ProductService,
-    private readonly invoiceService: InvoiceService,
-    private readonly cdRef: ChangeDetectorRef) {
+    private readonly invoiceService: InvoiceService) {
     this.itemsForm = this.fb.group({
       invoiceItems: this.fb.array([this.newItems()]),
     });
@@ -220,8 +225,9 @@ export class InvoiceConfigComponent implements OnChanges {
     } else {
       this.sgstAmount = 0;
     }
-    this.totalAmount = Number((totalAmountWoGst + this.cgstAmount + this.sgstAmount).toFixed(2));
-    this.amountInWords = this.toWords.convert(this.totalAmount, { currency: true });
+    this.totalAmount = Number((totalAmountWoGst).toFixed(2));
+    this.grossAmount = Math.round(Number((totalAmountWoGst + this.cgstAmount + this.sgstAmount).toFixed(2)));
+    this.amountInWords = this.toWords.convert(this.grossAmount, { currency: true });
     this.formData();
   }
 
@@ -231,6 +237,7 @@ export class InvoiceConfigComponent implements OnChanges {
     this.invoices['cgstAmount'] = Number(this.cgstAmount);
     this.invoices['sgstPercent'] = Number(this.sgstPer);
     this.invoices['sgstAmount'] = Number(this.sgstAmount);
+    this.invoices['grossAmount'] = Number(this.grossAmount);
     this.invoices['totalAmount'] = Number(this.totalAmount);
     let items = this.itemsForm.getRawValue()?.invoiceItems;
     this.invoices['invoiceItems'] = items;
@@ -258,6 +265,7 @@ export class InvoiceConfigComponent implements OnChanges {
       this.sgstPer = invoiceDetail?.data['sgstPercent'];
       this.sgstAmount = invoiceDetail?.data['sgstAmount'];
       this.totalAmount = invoiceDetail?.data['totalAmount'];
+      this.grossAmount = invoiceDetail?.data['grossAmount'];
       invoiceDetail?.data?.invoiceItems?.forEach((item, index) => {
         Object.keys(item).forEach(key => {
           if (key !== 'invoiceItemId') {
@@ -284,7 +292,6 @@ export class InvoiceConfigComponent implements OnChanges {
         filtered.push(product.code);
       }
     }
-
     this.filteredProducts = filtered;
   }
 }
