@@ -226,7 +226,7 @@ export class InvoiceTableComponent implements OnInit, OnDestroy {
                 {}, {}, { text: `Total Amount`, colSpan: 2 }, {}, { text: this.printInvoiceDetails.totalAmount, colSpan: 2, alignment: 'center' }, {}],
                 [{}, {}, {}, { text: `CGST: ${this.printInvoiceDetails.cgstPercent} %`, colSpan: 2 }, {}, { text: this.printInvoiceDetails.cgstAmount, colSpan: 2, alignment: 'center' }, {}],
                 [{}, {}, {}, { text: `SGST: ${this.printInvoiceDetails.sgstPercent} %`, colSpan: 2 }, {}, { text: this.printInvoiceDetails.sgstAmount, colSpan: 2, alignment: 'center' }, {}],
-                [{}, {}, {}, { text: 'Gross Amount', bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails.totalAmount, bold: true, colSpan: 2, alignment: 'center' }, {}],
+                [{}, {}, {}, { text: 'Gross Amount', bold: true, colSpan: 2 }, {}, { text: this.printInvoiceDetails?.grossAmount, bold: true, colSpan: 2, alignment: 'center' }, {}],
               ]
             }
           },
