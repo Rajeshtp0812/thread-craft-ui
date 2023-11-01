@@ -238,7 +238,7 @@ export class InvoiceTableComponent implements OnInit, OnDestroy {
               body: [
                 ['HSN Code', 'Pcs', 'GST', 'Taxable Value', 'CGST', 'SGST'],
                 ...subData?.map((inv: any) =>
-                  ([inv.hsnCode, inv.quantity, inv.gst, inv.taxableAmount, inv.cgst, inv.sgst])),
+                  ([inv.hsnCode, inv.quantity, `${inv.gst} %`, inv.taxableAmount, inv.cgst, inv.sgst])),
               ]
             }
           },

@@ -94,8 +94,12 @@ export class CommonFormComponent implements OnInit, OnChanges {
       this.formRequiredFields.contact = this.required;
       formCtrl['contact'].addValidators(Validators.required)
     } else if (this.wrapperComponentName === WRAPPER_COMPONENT.VENDOR) {
+      this.formRequiredFields.gst = '';
       this.form.removeControl('email');
       this.form.addControl('alternateContact', new FormControl());
+      this.form.get('gst').clearValidators();
+      this.form.updateValueAndValidity();
+      this.form.get('gst').setValidators([customPatternValidator(GST, 'GST number is invalid')]);
       this.form.updateValueAndValidity();
     }
     if (changes['updateFormData']?.currentValue) {
