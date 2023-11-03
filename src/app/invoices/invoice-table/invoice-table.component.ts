@@ -44,7 +44,7 @@ export class InvoiceTableComponent implements OnInit, OnDestroy {
     this.isDataLoading = true;
     try {
       let response: any = await this.invoiceService.getInvoices();
-      this.data = response.data;
+      this.data = response.data?.sort((a, b) => b?.invoiceId - a?.invoiceId);
     } catch (error) {
       this.messageService.add({ severity: 'error', summary: 'Unexpected system error', detail: '' });
     } finally {
